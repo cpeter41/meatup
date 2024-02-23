@@ -4,7 +4,7 @@ const { User } = require("../db/models");
 
 const { secret, expiresIn } = jwtConfig;
 
-const setTokenCookie = (res, user) => {
+const setTokenCookie = async (res, user) => {
     const safeUser = {
         id: user.id,
         email: user.email,
