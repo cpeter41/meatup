@@ -19,9 +19,12 @@ router.post("/", async (req, res, next) => {
         },
     });
 
-    if (!user || !bcrypt.compareSync(password, user.hashedPassword.toString())) {
-        return next(new Error("Login failed"));
-    };
+    if (
+        !user ||
+        !bcrypt.compareSync(password, user.hashedPassword.toString())
+    ) {
+        next(new Error("Login failed"));
+    }
 
     const newUser = {
         id: user.id,
@@ -31,14 +34,24 @@ router.post("/", async (req, res, next) => {
 
     await setTokenCookie(res, newUser);
 
-    return res.json({
-        user: newUser,
-    });
+    res.json({ user: newUser });
 });
 
-router.delete('/', (req, res) => {
-    res.clearCookie('token');
-    res.json({ message: 'success' });
+router.delete("/", (req, res) => {
+    res.clearCookie("token");
+    res.json({ message: "success" });
+});
+
+router.get("/", (req, res) => {
+    const { user } = req;
+    if (user) {
+        const safeUser = {
+            id: user.id,
+            email: user.email,
+            username: user.username,
+        };
+        res.json({ user: safeUser });
+    } else res.json({ user: null });
 });
 
 module.exports = router;
