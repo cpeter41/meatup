@@ -40,15 +40,17 @@ router.post("/", validateLogin, async (req, res, next) => {
         next(new Error("Login failed"));
     }
 
-    const newUser = {
+    const validatedUser = {
         id: user.id,
         email: user.email,
         username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
     };
 
-    await setTokenCookie(res, newUser);
+    await setTokenCookie(res, validatedUser);
 
-    res.json({ user: newUser });
+    res.json({ user: validatedUser });
 });
 
 router.delete("/", (req, res) => {
@@ -63,6 +65,8 @@ router.get("/", (req, res) => {
             id: user.id,
             email: user.email,
             username: user.username,
+            firstName: user.firstName,
+            lastName: user.lastName,
         };
         res.json({ user: safeUser });
     } else res.json({ user: null });
