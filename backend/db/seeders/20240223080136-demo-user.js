@@ -3,7 +3,7 @@
 const { User } = require('../models');
 const bcrypt = require('bcryptjs');
 
-let options = {};
+let options = { validate: true };
 if (process.env.NODE_ENV === 'production') {
     options.schema = process.env.SCHEMA;
 };
@@ -26,7 +26,7 @@ module.exports = {
                 email: "demo@guy.com",
                 hashedPassword: bcrypt.hashSync('password123')
             }
-        ], { validate: true });
+        ], options);
     },
 
     async down(queryInterface, Sequelize) {
@@ -36,9 +36,9 @@ module.exports = {
          * Example:
          * await queryInterface.bulkDelete('People', null, {});
          */
-        options.tableName = "Users";
-        await queryInterface.bulkDelete(options, {
+        // options.tableName = "Users";
+        await queryInterface.bulkDelete('Users', {
             username: "demoguy"
-        }, {});
+        }, options);
     },
 };
