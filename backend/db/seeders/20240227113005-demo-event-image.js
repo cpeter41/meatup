@@ -1,40 +1,35 @@
 "use strict";
 
-const { Membership } = require("../models");
+const { EventImage } = require("../models");
 const { Op } = require("sequelize");
 
 let options = { validate: true };
 if (process.env.NODE_ENV === "production") {
     options.schema = process.env.SCHEMA;
-};
+}
 
-const memberships = [
+const eventImages = [
     {
-        userId: 1,
-        groupId: 1,
-        status: "co-host"
+        eventId: 1,
+        url: "https://google.com",
+        preview: true,
     },
     {
-        userId: 2,
-        groupId: 1,
-        status: "co-host"
+        eventId: 2,
+        url: "https://google.com",
+        preview: true,
     },
     {
-        userId: 2,
-        groupId: 2,
-        status: "member"
+        eventId: 3,
+        url: "https://google.com",
+        preview: true,
     },
     {
-        userId: 3,
-        groupId: 2,
-        status: "pending"
+        eventId: 3,
+        url: "https://yahoo.com",
+        preview: false,
     },
-    {
-        userId: 4,
-        groupId: 3,
-        status: "co-host"
-    },
-]
+];
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -48,7 +43,7 @@ module.exports = {
          *   isBetaMember: false
          * }], {});
          */
-        await Membership.bulkCreate(memberships, options);
+        await EventImage.bulkCreate(eventImages, options);
     },
 
     async down(queryInterface, Sequelize) {
@@ -58,10 +53,10 @@ module.exports = {
          * Example:
          * await queryInterface.bulkDelete('People', null, {});
          */
-        await queryInterface.bulkDelete('Memberships', {
-            userId: {
-                [Op.lte]: 5
-            }
-        }, options)
+        await queryInterface.bulkDelete(
+            "EventImages",
+            { eventId: { [Op.lte]: 5 } },
+            options
+        );
     },
 };

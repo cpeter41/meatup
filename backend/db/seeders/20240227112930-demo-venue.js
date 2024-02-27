@@ -54,7 +54,7 @@ const venues = [
         address: "4 Lore Ct.",
         city: "Bellevue",
         state: "WA",
-        lat: -45.1010110,
+        lat: -45.101011,
         lng: 90.0,
     },
 ];
@@ -81,5 +81,12 @@ module.exports = {
          * Example:
          * await queryInterface.bulkDelete('People', null, {});
          */
+        await queryInterface.bulkDelete(
+            "Venues",
+            {
+                groupId: { [Op.lte]: 5 },
+            },
+            options
+        );
     },
 };

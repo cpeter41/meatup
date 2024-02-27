@@ -38,7 +38,6 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.DECIMAL(10, 7),
                 allowNull: false,
                 validate: {
-                    len: [7, 10],
                     min: -90,
                     max: 90,
                 },
@@ -47,7 +46,6 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.DECIMAL(10, 7),
                 allowNull: false,
                 validate: {
-                    len: [7, 10],
                     min: -180,
                     max: 180,
                 },
