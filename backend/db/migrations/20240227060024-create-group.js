@@ -12,6 +12,7 @@ module.exports = {
             organizerId: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
+                references: { model: "Users", key: "id" },
             },
             name: {
                 type: Sequelize.STRING,
@@ -31,11 +32,11 @@ module.exports = {
             },
             city: {
                 type: Sequelize.STRING,
-                allowNull: false
+                allowNull: false,
             },
             state: {
                 type: Sequelize.STRING,
-                allowNull: false
+                allowNull: false,
             },
             createdAt: {
                 allowNull: false,

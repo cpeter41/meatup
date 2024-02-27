@@ -12,10 +12,12 @@ module.exports = {
             eventId: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
+                references: { model: "Events", key: "id" },
             },
             userId: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
+                references: { model: "Users", key: "id" },
             },
             status: {
                 type: Sequelize.INTEGER,
