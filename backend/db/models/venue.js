@@ -32,16 +32,25 @@ module.exports = (sequelize, DataTypes) => {
             state: {
                 type: DataTypes.STRING,
                 allowNull: false,
+                validate: { len: [2, 2] },
             },
             lat: {
-                // add params to decimal
-                type: DataTypes.DECIMAL,
+                type: DataTypes.DECIMAL(10, 7),
                 allowNull: false,
+                validate: {
+                    len: [7, 10],
+                    min: -90,
+                    max: 90,
+                },
             },
             lng: {
-                // add params to decimal
-                type: DataTypes.DECIMAL,
+                type: DataTypes.DECIMAL(10, 7),
                 allowNull: false,
+                validate: {
+                    len: [7, 10],
+                    min: -180,
+                    max: 180,
+                },
             },
         },
         {

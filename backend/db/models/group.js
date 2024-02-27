@@ -37,10 +37,14 @@ module.exports = (sequelize, DataTypes) => {
             },
             about: {
                 type: DataTypes.TEXT,
+                validate: { len: [16, 2048] },
             },
             type: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.STRING,
                 allowNull: false,
+                validate: {
+                    isIn: [["In person", "Online"]],
+                },
             },
             private: {
                 type: DataTypes.BOOLEAN,
@@ -53,6 +57,7 @@ module.exports = (sequelize, DataTypes) => {
             state: {
                 type: DataTypes.STRING,
                 allowNull: false,
+                validate: { len: [2, 2] },
             },
         },
         {

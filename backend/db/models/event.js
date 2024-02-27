@@ -41,27 +41,42 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
             },
             type: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.STRING,
                 allowNull: false,
+                validate: {
+                    isIn: [["In person", "Online"]],
+                },
             },
             capacity: {
                 type: DataTypes.INTEGER,
             },
             price: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.DECIMAL(6, 2),
             },
             startDate: {
                 type: DataTypes.DATE,
                 allowNull: false,
+                validate: {
+                    isDate: true,
+                    isAfter: sequelize.literal("CURRENT_TIMESTAMP"),
+                },
             },
             endDate: {
                 type: DataTypes.DATE,
                 allowNull: false,
+                validate: { isDate: true },
             },
         },
         {
             sequelize,
             modelName: "Event",
+            validate: {
+                checkEndDate() {
+                    if (this.endDate < this.startDate) {
+                        throw new Error("End date is less than start date");
+                    }
+                },
+            },
         }
     );
     return Event;
