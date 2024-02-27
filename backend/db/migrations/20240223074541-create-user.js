@@ -3,7 +3,7 @@
 let options = {};
 if (process.env.NODE_ENV === 'production') {
     options.schema = process.env.SCHEMA;
-}
+};
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -42,10 +42,8 @@ module.exports = {
                 defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
             },
         }, options);
-        console.log('here');
     },
     async down(queryInterface, Sequelize) {
-        // options.tableName = "Users";
         await queryInterface.dropTable("Users");
     },
 };
