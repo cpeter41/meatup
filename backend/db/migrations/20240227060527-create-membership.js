@@ -26,7 +26,7 @@ module.exports = {
                 references: { model: "Groups", key: "id" },
             },
             status: {
-                type: Sequelize.INTEGER,
+                type: Sequelize.STRING,
                 allowNull: false,
             },
             createdAt: {

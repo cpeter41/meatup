@@ -29,7 +29,7 @@ module.exports = {
                 type: Sequelize.TEXT,
             },
             type: {
-                type: Sequelize.INTEGER,
+                type: Sequelize.STRING,
                 allowNull: false,
             },
             private: {

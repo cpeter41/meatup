@@ -35,12 +35,12 @@ module.exports = {
             },
             lat: {
                 // add params to decimal
-                type: Sequelize.DECIMAL,
+                type: Sequelize.DECIMAL(10, 7),
                 allowNull: false,
             },
             lng: {
                 // add params to decimal
-                type: Sequelize.DECIMAL,
+                type: Sequelize.DECIMAL(10, 7),
                 allowNull: false,
             },
             createdAt: {
