@@ -3,10 +3,10 @@ const { Group } = require("../../db/models");
 const router = express.Router();
 
 router.get("/", async (req, res, next) => {
-    console.log('here');
     const results = await Group.findAll();
+    results.map((group) => group.dataValues);
     console.log(results);
-    // res.json(results.dataValues);
+    res.json({ Groups: results });
 });
 
 module.exports = router;
