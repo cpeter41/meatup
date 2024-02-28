@@ -1,5 +1,6 @@
 const express = require("express");
 require("express-async-errors");
+require("dotenv").config();
 const morgan = require("morgan");
 const cors = require("cors");
 const csurf = require("csurf");
@@ -76,4 +77,9 @@ app.use((err, req, res, next) => {
     });
 });
 
-module.exports = app;
+if (require.main === module) {
+    const port = 8000;
+    app.listen(port, () => console.log("Server is listening on port", port));
+} else {
+    module.exports = app;
+}
