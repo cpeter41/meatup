@@ -33,12 +33,11 @@ router.post("/", validateLogin, async (req, res, next) => {
         },
     });
 
-    if (
-        !user ||
-        !bcrypt.compareSync(password, user.hashedPassword.toString())
-    ) {
-        next(new Error("Login failed"));
-    }
+    if (!user || !bcrypt.compareSync(password, user.hashedPassword.toString())) {
+        const err = new Error("Invalid credentials");
+        err.status = 401;
+        next(new Error("Invalid credentials"));
+    };
 
     const validatedUser = {
         id: user.id,
@@ -63,10 +62,10 @@ router.get("/", (req, res) => {
     if (user) {
         const safeUser = {
             id: user.id,
-            email: user.email,
-            username: user.username,
             firstName: user.firstName,
             lastName: user.lastName,
+            email: user.email,
+            username: user.username,
         };
         res.json({ user: safeUser });
     } else res.json({ user: null });
