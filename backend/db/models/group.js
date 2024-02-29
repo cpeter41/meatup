@@ -1,5 +1,5 @@
 "use strict";
-const { Model } = require("sequelize");
+const { Model, ValidationError } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
     class Group extends Model {
         /**
@@ -11,14 +11,17 @@ module.exports = (sequelize, DataTypes) => {
             // define association here
             Group.hasMany(models.Event, { foreignKey: "groupId" });
 
-            Group.belongsTo(models.User, { foreignKey: "organizerId" });
+            Group.belongsTo(models.User, {
+                foreignKey: "organizerId",
+                as: "Organizer",
+            });
 
-            // Group.belongsToMany(models.User, {
-            //     through: "Membership",
-            //     foreignKey: "groupId",
-            //     otherKey: "userId",
-            // });
-            Group.hasMany(models.Membership, { foreignKey: 'groupId' });
+            Group.belongsToMany(models.User, {
+                through: "Membership",
+                foreignKey: "groupId",
+                otherKey: "userId",
+                as: "Member",
+            });
 
             Group.hasMany(models.GroupImage, { foreignKey: "groupId" });
 
@@ -35,17 +38,17 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 unique: true,
                 allowNull: false,
+                validate: {
+                    len: [1, 60],
+                },
             },
             about: {
                 type: DataTypes.TEXT,
-                validate: { len: [16, 2048] },
+                allowNull: false,
             },
             type: {
                 type: DataTypes.STRING,
                 allowNull: false,
-                validate: {
-                    isIn: [["In person", "Online"]],
-                },
             },
             private: {
                 type: DataTypes.BOOLEAN,
@@ -53,17 +56,30 @@ module.exports = (sequelize, DataTypes) => {
             },
             city: {
                 type: DataTypes.STRING,
-                allowNull: false,
             },
             state: {
                 type: DataTypes.STRING,
-                allowNull: false,
-                validate: { len: [2, 2] },
             },
         },
         {
             sequelize,
             modelName: "Group",
+            validate: {
+                // validateAll() {
+                //     const err = new ValidationError("Bad Request");
+                //     if (this.name.split("").length > 60)
+                //         err.errors.push(`Name must be 60 characters or less`);
+                //     if (this.about.split("").length < 50)
+                //         err.errors.push(`About must be 50 characters or more`);
+                //     if (this.type !== "In person" && this.type !== "Online")
+                //         err.errors.push(`Type must be 'Online' or 'In person'`);
+                //     if (typeof this.private !== "boolean")
+                //         err.errors.push(`Private must be a boolean`);
+                //     if (!this.city) err.errors.push(`City is required`);
+                //     if (!this.state) err.errors.push(`State is required`);
+                //     if (err.errors.length) throw err;
+                // },
+            },
         }
     );
     return Group;

@@ -21,7 +21,7 @@ const groups = [
     {
         organizerId: 3,
         name: "Orange County Hiking Club",
-        about: "re re rer er er er er er e",
+        about: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris facilis",
         type: "In person",
         private: false,
         city: "Laguna Niguel",
