@@ -153,6 +153,7 @@ router.put("/:groupId", async (req, res, next) => {
     const foundGroup = await Group.findByPk(groupId);
     if (!foundGroup) return res.status(404).json({ message: "Group couldn't be found"});
 
+    const err = { message: "Bad Request", errors: [] };
     validateGroupData(req, err);
 
     foundGroup.name = name;
