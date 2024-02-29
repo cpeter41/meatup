@@ -111,8 +111,8 @@ router.post("/:groupId/images", async (req, res, next) => {
     });
 });
 
-function validateGroupData(body, err) {
-    const { name, about, type, private, city, state } = body;
+function validateGroupData(req, err) {
+    const { name, about, type, private, city, state } = req.body;
     if (name.split("").length > 60)
         err.errors.push(`Name must be 60 characters or less`);
     if (about.split("").length < 50)
@@ -128,10 +128,11 @@ function validateGroupData(body, err) {
 }
 
 router.post("/", async (req, res, next) => {
+    const { name, about, type, private, city, state } = req.body;
     const { user } = req;
     const err = { message: "Bad Request", errors: [] };
 
-    validateGroupData(req.body, err);
+    validateGroupData(req, err);
 
     const newGroup = await Group.create({
         organizerId: user.id,
