@@ -55,6 +55,11 @@ module.exports = (sequelize, DataTypes) => {
             sequelize,
             modelName: "Venue",
             // implement model wide unique lat/lng for each location
+            defaultScope: {
+                attributes: {
+                    exclude: ["createdAt", "updatedAt"],
+                },
+            },
         }
     );
     return Venue;

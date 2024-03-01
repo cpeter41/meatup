@@ -1,5 +1,9 @@
 const express = require("express");
-const { Group, User, GroupImage, Venue } = require("../../db/models");
+const {
+    validateGroupData,
+    validateVenueData,
+} = require("../../utils/old_validators");
+const { Group, User, GroupImage, Venue, Event, EventImage } = require("../../db/models");
 const { Op } = require("sequelize");
 const router = express.Router();
 
@@ -95,10 +99,12 @@ router.get("/:groupId", async (req, res, next) => {
 });
 
 router.post("/:groupId/images", async (req, res, next) => {
-    const { groupId } = req.params;
+    let { groupId } = req.params;
+    groupId = parseInt(groupId);
 
     const foundGroup = await Group.findByPk(groupId);
-    if (!foundGroup) return res.status(404).json({ message: "Group couldn't be found"});
+    if (!foundGroup)
+        return res.status(404).json({ message: "Group couldn't be found" });
 
     const { url, preview } = req.body;
 
@@ -111,28 +117,98 @@ router.post("/:groupId/images", async (req, res, next) => {
     });
 });
 
-function validateGroupData(req, err) {
-    const { name, about, type, private, city, state } = req.body;
-    if (name.split("").length > 60)
-        err.errors.push(`Name must be 60 characters or less`);
-    if (about.split("").length < 50)
-        err.errors.push(`About must be 50 characters or more`);
-    if (type !== "In person" && type !== "Online")
-        err.errors.push(`Type must be 'Online' or 'In person'`);
-    if (typeof private !== "boolean")
-        err.errors.push(`Private must be a boolean`);
-    if (!city) err.errors.push(`City is required`);
-    if (!state) err.errors.push(`State is required`);
+router.get("/:groupId/events", async (req, res, next) => {
+    const { groupId } = req.params;
+    const events = await Event.findAll({
+        where: { groupId: groupId },
+        attributes: [
+            "id",
+            "groupId",
+            "venueId",
+            "name",
+            "type",
+            "startDate",
+            "endDate",
+        ],
+        include: [
+            {
+                model: Group,
+                attributes: ["id", "name", "city", "state"],
+            },
+            {
+                model: Venue,
+                attributes: ["id", "city", "state"],
+            },
+        ],
+    });
 
-    if (err.errors.length) res.status(400).json(err);
-}
+    if (!events.length) return res.status(404).json({ message: "Group couldn't be found" });
+
+    // consider using aggregate fn instead of for loop
+    for (let event of events) {
+        const numAttending = await event.countUsers();
+        event.dataValues.numAttending = numAttending;
+
+        const previewImage = await EventImage.findOne({ where: { eventId: event.dataValues.id } });
+        if (previewImage) event.dataValues.previewImage = previewImage.dataValues.url;
+        else event.dataValues.previewImage = null;
+    };
+
+    res.json({ Events: events });
+});
+
+router.get("/:groupId/venues", async (req, res, next) => {
+    let { groupId } = req.params;
+    groupId = parseInt(groupId);
+
+    const venues = await Venue.findAll({
+        include: [
+            {
+                model: Group,
+                attributes: [],
+            },
+        ],
+        where: { "$Group.id$": groupId },
+    });
+
+    res.json({ Venues: venues });
+});
+
+router.post("/:groupId/venues", async (req, res, next) => {
+    let { groupId } = req.params;
+    groupId = parseInt(groupId);
+    const foundGroup = await Group.findByPk(groupId);
+    if (!foundGroup)
+        return res.status(404).json({ message: "Group couldn't be found" });
+
+    const { address, city, state, lat, lng } = req.body;
+    validateVenueData(req);
+
+    const newVenue = await Venue.create({
+        groupId,
+        address,
+        city,
+        state,
+        lat,
+        lng,
+    });
+
+    res.json({
+        id: newVenue.dataValues.id,
+        groupId: newVenue.dataValues.groupId,
+        address: newVenue.dataValues.address,
+        city: newVenue.dataValues.city,
+        state: newVenue.dataValues.state,
+        lat: newVenue.dataValues.lat,
+        lng: newVenue.dataValues.lng,
+    });
+});
 
 router.post("/", async (req, res, next) => {
     const { name, about, type, private, city, state } = req.body;
     const { user } = req;
-    const err = { message: "Bad Request", errors: [] };
 
-    validateGroupData(req, err);
+    validateGroupData(req);
 
     const newGroup = await Group.create({
         organizerId: user.id,
@@ -151,10 +227,10 @@ router.put("/:groupId", async (req, res, next) => {
     const { name, about, type, private, city, state } = req.body;
     const { groupId } = req.params;
     const foundGroup = await Group.findByPk(groupId);
-    if (!foundGroup) return res.status(404).json({ message: "Group couldn't be found"});
+    if (!foundGroup)
+        return res.status(404).json({ message: "Group couldn't be found" });
 
-    const err = { message: "Bad Request", errors: [] };
-    validateGroupData(req, err);
+    validateGroupData(req);
 
     foundGroup.name = name;
     foundGroup.about = about;
@@ -172,11 +248,12 @@ router.delete("/:groupId", async (req, res, next) => {
     const { groupId } = req.params;
 
     const foundGroup = await Group.findByPk(groupId);
-    if (!foundGroup) return res.status(404).json({ message: "Group couldn't be found"});
+    if (!foundGroup)
+        return res.status(404).json({ message: "Group couldn't be found" });
 
     await foundGroup.destroy();
 
     res.json({ message: "Successfully deleted" });
-})
+});
 
 module.exports = router;
