@@ -117,6 +117,53 @@ router.post("/:groupId/images", async (req, res, next) => {
     });
 });
 
+router.get("/:groupId/venues", async (req, res, next) => {
+    let { groupId } = req.params;
+    groupId = parseInt(groupId);
+
+    const venues = await Venue.findAll({
+        include: [
+            {
+                model: Group,
+                attributes: [],
+            },
+        ],
+        where: { "$Group.id$": groupId },
+    });
+
+    res.json({ Venues: venues });
+});
+
+router.post("/:groupId/venues", async (req, res, next) => {
+    let { groupId } = req.params;
+    groupId = parseInt(groupId);
+    const foundGroup = await Group.findByPk(groupId);
+    if (!foundGroup)
+        return res.status(404).json({ message: "Group couldn't be found" });
+
+    const { address, city, state, lat, lng } = req.body;
+    validateVenueData(req, res);
+
+    const newVenue = await Venue.create({
+        groupId,
+        address,
+        city,
+        state,
+        lat: parseFloat(lat),
+        lng: parseFloat(lng),
+    });
+
+    res.json({
+        id: newVenue.dataValues.id,
+        groupId: newVenue.dataValues.groupId,
+        address: newVenue.dataValues.address,
+        city: newVenue.dataValues.city,
+        state: newVenue.dataValues.state,
+        lat: newVenue.dataValues.lat,
+        lng: newVenue.dataValues.lng,
+    });
+});
+
 router.get("/:groupId/events", async (req, res, next) => {
     const { groupId } = req.params;
     const events = await Event.findAll({
@@ -157,58 +204,16 @@ router.get("/:groupId/events", async (req, res, next) => {
     res.json({ Events: events });
 });
 
-router.get("/:groupId/venues", async (req, res, next) => {
-    let { groupId } = req.params;
-    groupId = parseInt(groupId);
-
-    const venues = await Venue.findAll({
-        include: [
-            {
-                model: Group,
-                attributes: [],
-            },
-        ],
-        where: { "$Group.id$": groupId },
-    });
-
-    res.json({ Venues: venues });
-});
-
-router.post("/:groupId/venues", async (req, res, next) => {
-    let { groupId } = req.params;
-    groupId = parseInt(groupId);
-    const foundGroup = await Group.findByPk(groupId);
-    if (!foundGroup)
-        return res.status(404).json({ message: "Group couldn't be found" });
-
-    const { address, city, state, lat, lng } = req.body;
-    validateVenueData(req);
-
-    const newVenue = await Venue.create({
-        groupId,
-        address,
-        city,
-        state,
-        lat,
-        lng,
-    });
-
-    res.json({
-        id: newVenue.dataValues.id,
-        groupId: newVenue.dataValues.groupId,
-        address: newVenue.dataValues.address,
-        city: newVenue.dataValues.city,
-        state: newVenue.dataValues.state,
-        lat: newVenue.dataValues.lat,
-        lng: newVenue.dataValues.lng,
-    });
+router.post("/:groupId/events", async (req, res, next) => {
+    const { groupId } = req.params;
+    // const { venueId, name, type, capacity, price, description, startDate, endDate }
 });
 
 router.post("/", async (req, res, next) => {
     const { name, about, type, private, city, state } = req.body;
     const { user } = req;
 
-    validateGroupData(req);
+    validateGroupData(req, res);
 
     const newGroup = await Group.create({
         organizerId: user.id,
@@ -230,7 +235,7 @@ router.put("/:groupId", async (req, res, next) => {
     if (!foundGroup)
         return res.status(404).json({ message: "Group couldn't be found" });
 
-    validateGroupData(req);
+    validateGroupData(req, res);
 
     foundGroup.name = name;
     foundGroup.about = about;

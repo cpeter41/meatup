@@ -1,4 +1,4 @@
-function validateVenueData(req) {
+function validateVenueData(req, res) {
     const err = { message: "Bad Request", errors: [] };
     const { address, city, state, lat, lng } = req.body;
     if (!address)
@@ -12,10 +12,10 @@ function validateVenueData(req) {
     if (lng < -180 || lng > 180)
         err.errors.push(`Longitude must be within -180 and 180`);
 
-    if (err.errors.length) res.status(400).json(err);
+    if (err.errors.length) return res.status(400).json(err);
 };
 
-function validateGroupData(req) {
+function validateGroupData(req, res) {
     const err = { message: "Bad Request", errors: [] };
     const { name, about, type, private, city, state } = req.body;
     if (name.split("").length > 60)
@@ -29,7 +29,7 @@ function validateGroupData(req) {
     if (!city) err.errors.push(`City is required`);
     if (!state) err.errors.push(`State is required`);
 
-    if (err.errors.length) res.status(400).json(err);
+    if (err.errors.length) return res.status(400).json(err);
 }
 
 module.exports = { validateVenueData, validateGroupData }
