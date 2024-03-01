@@ -156,8 +156,8 @@ router.post("/:groupId/venues", async (req, res, next) => {
         address,
         city,
         state,
-        lat: parseFloat(lat),
-        lng: parseFloat(lng),
+        lat,
+        lng,
     });
 
     res.json({
@@ -166,8 +166,8 @@ router.post("/:groupId/venues", async (req, res, next) => {
         address: newVenue.dataValues.address,
         city: newVenue.dataValues.city,
         state: newVenue.dataValues.state,
-        lat: newVenue.dataValues.lat,
-        lng: newVenue.dataValues.lng,
+        lat: parseFloat(newVenue.dataValues.lat),
+        lng: parseFloat(newVenue.dataValues.lng),
     });
 });
 
