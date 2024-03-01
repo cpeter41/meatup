@@ -16,7 +16,7 @@ router.put("/:venueId", async (req, res, next) => {
     if (!foundVenue)
         return res.status(404).json({ message: "Venue couldn't be found" });
 
-    validateVenueData(req, res);
+    if(!validateVenueData(req, res)) return;
 
     foundVenue.address = address;
     foundVenue.city = city;

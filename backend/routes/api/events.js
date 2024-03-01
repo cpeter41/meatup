@@ -42,6 +42,11 @@ router.get("/:eventId", async (req, res, next) => {
     const numAttending = await foundEvent.countUsers();
     foundEvent.dataValues.numAttending = numAttending;
 
+    // parse decimal strings into decimals (postgres thing)
+    foundEvent.dataValues.price = parseFloat(foundEvent.dataValues.price);
+    foundEvent.dataValues.Venue.lat = parseFloat(foundEvent.dataValues.Venue.lat);
+    foundEvent.dataValues.Venue.lng = parseFloat(foundEvent.dataValues.Venue.lng);
+
     res.json(foundEvent);
 });
 

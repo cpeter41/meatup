@@ -3,7 +3,14 @@ const {
     validateGroupData,
     validateVenueData,
 } = require("../../utils/old_validators");
-const { Group, User, GroupImage, Venue, Event, EventImage } = require("../../db/models");
+const {
+    Group,
+    User,
+    GroupImage,
+    Venue,
+    Event,
+    EventImage,
+} = require("../../db/models");
 const { Op } = require("sequelize");
 const router = express.Router();
 
@@ -142,7 +149,7 @@ router.post("/:groupId/venues", async (req, res, next) => {
         return res.status(404).json({ message: "Group couldn't be found" });
 
     const { address, city, state, lat, lng } = req.body;
-    validateVenueData(req, res);
+    if (!validateVenueData(req, res)) return;
 
     const newVenue = await Venue.create({
         groupId,
@@ -189,17 +196,21 @@ router.get("/:groupId/events", async (req, res, next) => {
         ],
     });
 
-    if (!events.length) return res.status(404).json({ message: "Group couldn't be found" });
+    if (!events.length)
+        return res.status(404).json({ message: "Group couldn't be found" });
 
     // consider using aggregate fn instead of for loop
     for (let event of events) {
         const numAttending = await event.countUsers();
         event.dataValues.numAttending = numAttending;
 
-        const previewImage = await EventImage.findOne({ where: { eventId: event.dataValues.id } });
-        if (previewImage) event.dataValues.previewImage = previewImage.dataValues.url;
+        const previewImage = await EventImage.findOne({
+            where: { eventId: event.dataValues.id },
+        });
+        if (previewImage)
+            event.dataValues.previewImage = previewImage.dataValues.url;
         else event.dataValues.previewImage = null;
-    };
+    }
 
     res.json({ Events: events });
 });
@@ -213,7 +224,7 @@ router.post("/", async (req, res, next) => {
     const { name, about, type, private, city, state } = req.body;
     const { user } = req;
 
-    validateGroupData(req, res);
+    if (!validateGroupData(req, res)) return;
 
     const newGroup = await Group.create({
         organizerId: user.id,
@@ -235,7 +246,7 @@ router.put("/:groupId", async (req, res, next) => {
     if (!foundGroup)
         return res.status(404).json({ message: "Group couldn't be found" });
 
-    validateGroupData(req, res);
+    if (!validateGroupData(req, res)) return;
 
     foundGroup.name = name;
     foundGroup.about = about;
