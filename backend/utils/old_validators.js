@@ -67,6 +67,4 @@ function newFormattedDate() {
     return [newDate, dateTimeParts[1]].join("");
 };
 
-// function format
-
 module.exports = { validateVenueData, validateGroupData, validateEventData };

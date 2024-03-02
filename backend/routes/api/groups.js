@@ -256,7 +256,7 @@ router.post("/:groupId/events", async (req, res, next) => {
         name: newEvent.name,
         type: newEvent.type,
         capacity: newEvent.capacity,
-        price: newEvent.price,
+        price: parseFloat(newEvent.price).toFixed(2),
         description: newEvent.description,
         startDate: newEvent.startDate,
         endDate: newEvent.endDate,
