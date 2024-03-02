@@ -2,6 +2,7 @@ const express = require("express");
 const {
     validateGroupData,
     validateVenueData,
+    validateEventData,
 } = require("../../utils/old_validators");
 const {
     Group,
@@ -33,19 +34,14 @@ router.get("/", async (req, res, next) => {
         include: [
             {
                 model: User,
-                // attributes: [],
                 as: "Member",
             },
-            {
-                model: GroupImage,
-                // where: { preview: true },
-                // attributes: ["url"],
-            },
+            { model: GroupImage },
         ],
     });
 
     groups.forEach((group) => {
-        group.dataValues.numMembers = group.dataValues.Member.length;
+        group.dataValues.numMembers = group.Member.length;
         delete group.dataValues.Member;
     });
 
@@ -161,13 +157,13 @@ router.post("/:groupId/venues", async (req, res, next) => {
     });
 
     res.json({
-        id: newVenue.dataValues.id,
-        groupId: newVenue.dataValues.groupId,
-        address: newVenue.dataValues.address,
-        city: newVenue.dataValues.city,
-        state: newVenue.dataValues.state,
-        lat: parseFloat(newVenue.dataValues.lat),
-        lng: parseFloat(newVenue.dataValues.lng),
+        id: newVenue.id,
+        groupId: newVenue.groupId,
+        address: newVenue.address,
+        city: newVenue.city,
+        state: newVenue.state,
+        lat: parseFloat(newVenue.lat),
+        lng: parseFloat(newVenue.lng),
     });
 });
 
@@ -205,10 +201,9 @@ router.get("/:groupId/events", async (req, res, next) => {
         event.dataValues.numAttending = numAttending;
 
         const previewImage = await EventImage.findOne({
-            where: { eventId: event.dataValues.id },
+            where: { eventId: event.id },
         });
-        if (previewImage)
-            event.dataValues.previewImage = previewImage.dataValues.url;
+        if (previewImage) event.dataValues.previewImage = previewImage.url;
         else event.dataValues.previewImage = null;
     }
 
@@ -216,8 +211,56 @@ router.get("/:groupId/events", async (req, res, next) => {
 });
 
 router.post("/:groupId/events", async (req, res, next) => {
-    const { groupId } = req.params;
-    // const { venueId, name, type, capacity, price, description, startDate, endDate }
+    let { groupId } = req.params;
+    groupId = parseInt(groupId);
+
+    const foundGroup = await Group.findByPk(groupId);
+    if (!foundGroup)
+        return res.status(404).json({ message: "Group couldn't be found" });
+
+    const {
+        venueId,
+        name,
+        type,
+        capacity,
+        price,
+        description,
+        startDate,
+        endDate,
+    } = req.body;
+
+    console.log("DATES:", startDate, endDate);
+
+    const foundVenue = await Venue.findByPk(venueId);
+    if (!foundVenue)
+        return res.status(404).json({ message: "Venue couldn't be found" });
+
+    if (!validateEventData(req, res)) return;
+
+    const newEvent = await Event.create({
+        groupId,
+        venueId,
+        name,
+        type,
+        capacity,
+        price,
+        description,
+        startDate,
+        endDate,
+    });
+
+    res.json({
+        id: newEvent.id,
+        groupId: newEvent.groupId,
+        venueId: newEvent.venueId,
+        name: newEvent.name,
+        type: newEvent.type,
+        capacity: newEvent.capacity,
+        price: newEvent.price,
+        description: newEvent.description,
+        startDate: newEvent.startDate,
+        endDate: newEvent.endDate,
+    });
 });
 
 router.post("/", async (req, res, next) => {
