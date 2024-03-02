@@ -18,10 +18,12 @@ module.exports = (sequelize, DataTypes) => {
             userId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
+                references: { model: "Users", key: "id" },
             },
             groupId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
+                references: { model: "Groups", key: "id" },
             },
             status: {
                 type: DataTypes.STRING,

@@ -16,10 +16,12 @@ module.exports = (sequelize, DataTypes) => {
             eventId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
+                references: { model: "Events", key: "id" },
             },
             userId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
+                references: { model: "Users", key: "id" },
             },
             status: {
                 type: DataTypes.STRING,
