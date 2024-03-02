@@ -6,7 +6,7 @@ const { Op } = require("sequelize");
 let options = { validate: true };
 if (process.env.NODE_ENV === "production") {
     options.schema = process.env.SCHEMA;
-};
+}
 
 const groups = [
     {
@@ -16,7 +16,7 @@ const groups = [
         type: "Online",
         private: false,
         city: "Austin",
-        state: "TX"
+        state: "TX",
     },
     {
         organizerId: 3,
@@ -25,7 +25,7 @@ const groups = [
         type: "In person",
         private: false,
         city: "Laguna Niguel",
-        state: "CA"
+        state: "CA",
     },
     {
         organizerId: 1,
@@ -34,7 +34,7 @@ const groups = [
         type: "In person",
         private: false,
         city: "Anaheim",
-        state: "CA"
+        state: "CA",
     },
     {
         organizerId: 4,
@@ -43,7 +43,7 @@ const groups = [
         type: "Online",
         private: true,
         city: "Dana Point",
-        state: "CA"
+        state: "CA",
     },
     {
         organizerId: 5,
@@ -52,7 +52,7 @@ const groups = [
         type: "In person",
         private: false,
         city: "Hattiesburg",
-        state: "MS"
+        state: "MS",
     },
 ];
 
@@ -78,16 +78,21 @@ module.exports = {
          * Example:
          * await queryInterface.bulkDelete('People', null, {});
          */
-        await queryInterface.bulkDelete("Groups", {
-            name: {
-                [Op.in]: [
-                    "Goofy Goobers",
-                    "Orange County Hiking Club",
-                    "Los Angeles Divorced Dads",
-                    "South Coast Tabletop Club",
-                    "Mensa 2"
-                ],
+        options.tableName = "Groups";
+        await queryInterface.bulkDelete(
+            options,
+            {
+                name: {
+                    [Op.in]: [
+                        "Goofy Goobers",
+                        "Orange County Hiking Club",
+                        "Los Angeles Divorced Dads",
+                        "South Coast Tabletop Club",
+                        "Mensa 2",
+                    ],
+                },
             },
-        });
+            {}
+        );
     },
 };

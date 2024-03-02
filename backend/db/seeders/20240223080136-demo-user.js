@@ -70,8 +70,9 @@ module.exports = {
          * await queryInterface.bulkDelete('People', null, {});
          */
         // options.tableName = "Users";
+        options.tableName = "Users";
         await queryInterface.bulkDelete(
-            "Users",
+            options,
             {
                 username: {
                     [Op.in]: [
@@ -83,7 +84,7 @@ module.exports = {
                     ],
                 },
             },
-            options
+            {}
         );
     },
 };
