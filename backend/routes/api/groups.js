@@ -239,7 +239,7 @@ router.post("/:groupId/events", async (req, res, next) => {
 
     const newEvent = await Event.create({
         groupId,
-        venueId,
+        venueId: venueId || null,
         name,
         type,
         capacity,
@@ -256,7 +256,7 @@ router.post("/:groupId/events", async (req, res, next) => {
         name: newEvent.name,
         type: newEvent.type,
         capacity: newEvent.capacity,
-        price: parseFloat(newEvent.price).toFixed(2),
+        price: newEvent.price,
         description: newEvent.description,
         startDate: newEvent.startDate,
         endDate: newEvent.endDate,

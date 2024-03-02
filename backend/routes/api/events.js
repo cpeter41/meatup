@@ -4,6 +4,31 @@ const { Event, EventImage, User, Group, Venue } = require("../../db/models");
 const { Sequelize } = require("sequelize");
 const router = express.Router();
 
+router.post("/:eventId/images", async (req, res, next) => {
+    let { eventId } = req.params;
+    eventId = parseInt(eventId);
+
+    const foundEvent = await Event.findByPk(eventId);
+    if (!foundEvent)
+        return res.status(404).json({ message: "Event couldn't be found" });
+
+    const { url, preview } = req.body;
+
+    // no validation according to API docs
+
+    const newImage = await EventImage.create({
+        eventId,
+        url,
+        preview,
+    });
+
+    res.json({
+        id: newImage.id,
+        url: newImage.url,
+        preview: newImage.preview,
+    });
+});
+
 router.get("/:eventId", async (req, res, next) => {
     const { eventId } = req.params;
     const foundEvent = await Event.findByPk(eventId, {
@@ -44,8 +69,12 @@ router.get("/:eventId", async (req, res, next) => {
 
     // parse decimal strings into decimals (postgres thing)
     foundEvent.dataValues.price = parseFloat(foundEvent.dataValues.price);
-    foundEvent.dataValues.Venue.lat = parseFloat(foundEvent.dataValues.Venue.lat);
-    foundEvent.dataValues.Venue.lng = parseFloat(foundEvent.dataValues.Venue.lng);
+    foundEvent.dataValues.Venue.lat = parseFloat(
+        foundEvent.dataValues.Venue.lat
+    );
+    foundEvent.dataValues.Venue.lng = parseFloat(
+        foundEvent.dataValues.Venue.lng
+    );
 
     res.json(foundEvent);
 });
