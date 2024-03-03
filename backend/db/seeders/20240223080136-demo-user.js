@@ -72,17 +72,18 @@ module.exports = {
         // options.tableName = "Users";
         await queryInterface.bulkDelete(
             "Users",
-            {
-                username: {
-                    [Op.in]: [
-                        "demoguy",
-                        "spingo",
-                        "entropyth",
-                        "JMdude",
-                        "aliS",
-                    ],
-                },
-            },
+            // {
+            //     username: {
+            //         [Op.in]: [
+            //             "demoguy",
+            //             "spingo",
+            //             "entropyth",
+            //             "JMdude",
+            //             "aliS",
+            //         ],
+            //     },
+            // },
+            null,
             options
         );
     },

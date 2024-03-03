@@ -65,7 +65,8 @@ module.exports = {
          */
         await queryInterface.bulkDelete(
             "GroupImages",
-            { groupId: { [Op.lte]: 5 } },
+            // { groupId: { [Op.lte]: 5 } },
+            null,
             options
         );
     },

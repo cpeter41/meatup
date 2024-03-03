@@ -60,7 +60,8 @@ module.exports = {
          */
         await queryInterface.bulkDelete(
             "Memberships",
-            { userId: { [Op.lte]: 5 } },
+            // { userId: { [Op.lte]: 5 } },
+            null,
             options
         );
     },

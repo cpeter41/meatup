@@ -83,7 +83,8 @@ module.exports = {
          */
         await queryInterface.bulkDelete(
             "Venues",
-            { groupId: { [Op.lte]: 5 } },
+            // { groupId: { [Op.lte]: 5 } },
+            null,
             options
         );
     },

@@ -80,17 +80,18 @@ module.exports = {
          */
         await queryInterface.bulkDelete(
             "Groups",
-            {
-                name: {
-                    [Op.in]: [
-                        "Goofy Goobers",
-                        "Orange County Hiking Club",
-                        "Los Angeles Divorced Dads",
-                        "South Coast Tabletop Club",
-                        "Mensa 2",
-                    ],
-                },
-            },
+            // {
+            //     name: {
+            //         [Op.in]: [
+            //             "Goofy Goobers",
+            //             "Orange County Hiking Club",
+            //             "Los Angeles Divorced Dads",
+            //             "South Coast Tabletop Club",
+            //             "Mensa 2",
+            //         ],
+            //     },
+            // },
+            null,
             options
         );
     },
