@@ -15,9 +15,14 @@ const memberships = [
         status: "co-host",
     },
     {
-        userId: 2,
+        userId: 3,
         groupId: 1,
-        status: "co-host",
+        status: "member",
+    },
+    {
+        userId: 4,
+        groupId: 1,
+        status: "pending",
     },
     {
         userId: 2,
@@ -25,14 +30,9 @@ const memberships = [
         status: "member",
     },
     {
-        userId: 3,
-        groupId: 2,
-        status: "pending",
-    },
-    {
-        userId: 4,
-        groupId: 3,
-        status: "co-host",
+        userId: 5,
+        groupId: 4,
+        status: "member",
     },
 ];
 

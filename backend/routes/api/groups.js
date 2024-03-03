@@ -28,28 +28,6 @@ const setPreviewImage = (groups) => {
     });
 };
 
-// GET /api/groups
-router.get("/", async (req, res, next) => {
-    const groups = await Group.findAll({
-        include: [
-            {
-                model: User,
-                as: "Member",
-            },
-            { model: GroupImage },
-        ],
-    });
-
-    groups.forEach((group) => {
-        group.dataValues.numMembers = group.Member.length;
-        delete group.dataValues.Member;
-    });
-
-    setPreviewImage(groups);
-
-    res.json({ Groups: groups });
-});
-
 // GET api/groups/current
 router.get("/current", async (req, res, next) => {
     const { user } = req;
@@ -99,6 +77,44 @@ router.get("/:groupId", async (req, res, next) => {
     foundGroup.dataValues.numMembers = await foundGroup.countMember();
 
     res.json(foundGroup);
+});
+
+router.get("/:groupId/members", async (req, res, next) => {
+    const { groupId } = req.params;
+    const { user } = req;
+
+    const options = {
+        include: [
+            {
+                model: User,
+                as: "Member",
+                through: {
+                    where: { groupId: groupId },
+                    attributes: ["status"],
+                },
+                attributes: ["id", "firstName", "lastName"],
+            },
+        ],
+        attributes: ["organizerId"],
+    };
+
+    let foundGroup = await Group.findByPk(groupId, options);
+    if (!foundGroup)
+        return res.status(404).json({ message: "Group couldn't be found" });
+
+    foundGroup = foundGroup.toJSON();
+    const orgId = foundGroup.organizerId;
+    delete foundGroup.organizerId;
+
+    // if user isn't organizer...
+    if (orgId !== user.id) {
+        return res.json({
+            Members: foundGroup.Member.filter(
+                (member) => member.Membership.status !== "pending"
+            ),
+        });
+    }
+    else res.json({ Members: foundGroup.Member });
 });
 
 router.post("/:groupId/images", async (req, res, next) => {
@@ -229,7 +245,6 @@ router.post("/:groupId/events", async (req, res, next) => {
         endDate,
     } = req.body;
 
-    console.log("DATES:", startDate, endDate);
 
     const foundVenue = await Venue.findByPk(venueId);
     if (!foundVenue)
@@ -263,25 +278,6 @@ router.post("/:groupId/events", async (req, res, next) => {
     });
 });
 
-router.post("/", async (req, res, next) => {
-    const { name, about, type, private, city, state } = req.body;
-    const { user } = req;
-
-    if (!validateGroupData(req, res)) return;
-
-    const newGroup = await Group.create({
-        organizerId: user.id,
-        name,
-        about,
-        type,
-        private,
-        city,
-        state,
-    });
-
-    res.status(201).json(newGroup);
-});
-
 router.put("/:groupId", async (req, res, next) => {
     const { name, about, type, private, city, state } = req.body;
     const { groupId } = req.params;
@@ -313,6 +309,47 @@ router.delete("/:groupId", async (req, res, next) => {
     await foundGroup.destroy();
 
     res.json({ message: "Successfully deleted" });
+});
+
+// GET /api/groups
+router.get("/", async (req, res, next) => {
+    const groups = await Group.findAll({
+        include: [
+            {
+                model: User,
+                as: "Member",
+            },
+            { model: GroupImage },
+        ],
+    });
+
+    groups.forEach((group) => {
+        group.dataValues.numMembers = group.Member.length;
+        delete group.dataValues.Member;
+    });
+
+    setPreviewImage(groups);
+
+    res.json({ Groups: groups });
+});
+
+router.post("/", async (req, res, next) => {
+    const { name, about, type, private, city, state } = req.body;
+    const { user } = req;
+
+    if (!validateGroupData(req, res)) return;
+
+    const newGroup = await Group.create({
+        organizerId: user.id,
+        name,
+        about,
+        type,
+        private,
+        city,
+        state,
+    });
+
+    res.status(201).json(newGroup);
 });
 
 module.exports = router;
