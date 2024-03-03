@@ -11,6 +11,7 @@ const {
     Venue,
     Event,
     EventImage,
+    Membership,
 } = require("../../db/models");
 const { Op } = require("sequelize");
 const router = express.Router();
@@ -113,8 +114,53 @@ router.get("/:groupId/members", async (req, res, next) => {
                 (member) => member.Membership.status !== "pending"
             ),
         });
+    } else res.json({ Members: foundGroup.Member });
+});
+
+router.post("/:groupId/membership", async (req, res, next) => {
+    const { user } = req;
+    let { groupId } = req.params;
+    groupId = parseInt(groupId);
+
+    const foundGroup = await Group.findByPk(groupId, {
+        include: [
+            {
+                model: User,
+                as: "Member",
+                through: {
+                    where: { groupId: groupId },
+                    attributes: ["id", "status"],
+                },
+            },
+        ],
+    });
+    if (!foundGroup)
+        return res.status(404).json({ message: "Group couldn't be found" });
+
+    const existingUser = foundGroup.Member.find(
+        (member) => member.id === user.id
+    );
+    if (existingUser) {
+        if (existingUser.Membership.status === "pending") {
+            return res
+                .status(400)
+                .json({ message: "Membership has already been requested" });
+        } else
+            return res
+                .status(400)
+                .json({ message: "User is already a member of the group" });
     }
-    else res.json({ Members: foundGroup.Member });
+
+    const newMember = await Membership.create({
+        userId: user.id,
+        groupId,
+        status: "pending",
+    });
+
+    res.json({
+        memberId: newMember.id,
+        status: newMember.status,
+    });
 });
 
 router.post("/:groupId/images", async (req, res, next) => {
@@ -244,7 +290,6 @@ router.post("/:groupId/events", async (req, res, next) => {
         startDate,
         endDate,
     } = req.body;
-
 
     const foundVenue = await Venue.findByPk(venueId);
     if (!foundVenue)
