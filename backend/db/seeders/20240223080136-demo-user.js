@@ -60,6 +60,15 @@ module.exports = {
          * }], {});
          */
         await User.bulkCreate(users, options);
+
+        const users = await User.findAll();
+        console.log(users);
+
+        /*
+            users table not populated after seed? check with code above ^
+        */
+
+
     },
 
     async down(queryInterface, Sequelize) {
