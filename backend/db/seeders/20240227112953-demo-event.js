@@ -71,9 +71,9 @@ module.exports = {
          */
         options.tableName = "Events";
         await queryInterface.bulkDelete(
-            options,
+            "Events",
             { groupId: { [Op.lte]: 5 } },
-            {}
+            options
         );
     },
 };

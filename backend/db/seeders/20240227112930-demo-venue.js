@@ -81,11 +81,10 @@ module.exports = {
          * Example:
          * await queryInterface.bulkDelete('People', null, {});
          */
-        options.tableName = "Venues";
         await queryInterface.bulkDelete(
-            options,
+            "Venues",
             { groupId: { [Op.lte]: 5 } },
-            {}
+            options
         );
     },
 };

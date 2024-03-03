@@ -50,9 +50,9 @@ module.exports = {
          */
         options.tableName = "Attendances";
         await queryInterface.bulkDelete(
-            options,
+            "Attendances",
             { userId: { [Op.lte]: 5 } },
-            {}
+            options
         );
     },
 };

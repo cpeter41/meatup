@@ -60,15 +60,6 @@ module.exports = {
          * }], {});
          */
         await User.bulkCreate(users, options);
-
-        const users = await User.findAll();
-        console.log(users);
-
-        /*
-            users table not populated after seed? check with code above ^
-        */
-
-
     },
 
     async down(queryInterface, Sequelize) {
@@ -79,9 +70,8 @@ module.exports = {
          * await queryInterface.bulkDelete('People', null, {});
          */
         // options.tableName = "Users";
-        options.tableName = "Users";
         await queryInterface.bulkDelete(
-            options,
+            "Users",
             {
                 username: {
                     [Op.in]: [
@@ -93,7 +83,7 @@ module.exports = {
                     ],
                 },
             },
-            {}
+            options
         );
     },
 };

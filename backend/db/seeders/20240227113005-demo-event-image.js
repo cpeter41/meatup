@@ -55,9 +55,9 @@ module.exports = {
          */
         options.tableName = "EventImages";
         await queryInterface.bulkDelete(
-            options,
+            "EventImages",
             { eventId: { [Op.lte]: 5 } },
-            {}
+            options
         );
     },
 };
