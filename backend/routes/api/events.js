@@ -1,7 +1,10 @@
 const express = require("express");
-const { validateVenueData } = require("../../utils/old_validators");
+const {
+    validateVenueData,
+    validateEventData,
+} = require("../../utils/old_validators");
 const { Event, EventImage, User, Group, Venue } = require("../../db/models");
-const { Sequelize } = require("sequelize");
+const { Sequelize, EmptyResultError } = require("sequelize");
 const router = express.Router();
 
 router.post("/:eventId/images", async (req, res, next) => {
@@ -26,6 +29,53 @@ router.post("/:eventId/images", async (req, res, next) => {
         id: newImage.id,
         url: newImage.url,
         preview: newImage.preview,
+    });
+});
+
+router.put("/:eventId", async (req, res, next) => {
+    const { eventId } = req.params;
+
+    const foundEvent = await Event.findByPk(eventId);
+    if (!foundEvent) return res.json({ message: "Event couldn't be found" });
+
+    const {
+        venueId,
+        name,
+        type,
+        capacity,
+        price,
+        description,
+        startDate,
+        endDate,
+    } = req.body;
+
+    const foundVenue = await Venue.findByPk(venueId);
+    if (!foundVenue) return res.json({ message: "Venue couldn't be found" });
+
+    if (!validateEventData(req, res)) return;
+
+    foundEvent.venueId = venueId;
+    foundEvent.name = name;
+    foundEvent.type = type;
+    foundEvent.capacity = capacity;
+    foundEvent.price = price;
+    foundEvent.description = description;
+    foundEvent.startDate = startDate;
+    foundEvent.endDate = endDate;
+
+    await foundEvent.save();
+
+    res.json({
+        id: foundEvent.id,
+        groupId: foundEvent.groupId,
+        venueId: foundEvent.venueId,
+        name: foundEvent.name,
+        type: foundEvent.type,
+        capacity: foundEvent.capacity,
+        price: foundEvent.price,
+        description: foundEvent.description,
+        startDate: foundEvent.startDate,
+        endDate: foundEvent.endDate,
     });
 });
 
