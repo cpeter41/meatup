@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: { model: "Groups", key: "id" },
+                onDelete: "CASCADE",
             },
             url: {
                 type: DataTypes.STRING,
@@ -32,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
             modelName: "GroupImage",
             defaultScope: {
                 attributes: {
-                    include: ['id', 'url', 'preview'],
+                    include: ["id", "url", "preview"],
                 },
             },
         }

@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
             Group.hasMany(models.Event, { foreignKey: "groupId" });
 
             Group.belongsTo(models.User, {
-                foreignKey: "id",
+                foreignKey: "organizerId",
                 as: "Organizer",
             });
 
@@ -32,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
         {
             organizerId: {
                 type: DataTypes.INTEGER,
-                allowNull: false,
+                // allowNull: false,
                 references: { model: "Users", key: "id" },
             },
             name: {

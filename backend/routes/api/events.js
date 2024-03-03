@@ -36,7 +36,7 @@ router.put("/:eventId", async (req, res, next) => {
     const { eventId } = req.params;
 
     const foundEvent = await Event.findByPk(eventId);
-    if (!foundEvent) return res.json({ message: "Event couldn't be found" });
+    if (!foundEvent) return res.status(404).json({ message: "Event couldn't be found" });
 
     const {
         venueId,
@@ -50,7 +50,7 @@ router.put("/:eventId", async (req, res, next) => {
     } = req.body;
 
     const foundVenue = await Venue.findByPk(venueId);
-    if (!foundVenue) return res.json({ message: "Venue couldn't be found" });
+    if (!foundVenue) return res.status(404).json({ message: "Venue couldn't be found" });
 
     if (!validateEventData(req, res)) return;
 
@@ -77,6 +77,17 @@ router.put("/:eventId", async (req, res, next) => {
         startDate: foundEvent.startDate,
         endDate: foundEvent.endDate,
     });
+});
+
+router.delete("/:eventId", async (req, res, next) => {
+    const { eventId } = req.params;
+
+    const foundEvent = await Event.findByPk(eventId);
+    if (!foundEvent) return res.status(404).json({ message: "Event couldn't be found" });
+
+    await foundEvent.destroy();
+
+    res.json({ message: "Successfully deleted" });
 });
 
 router.get("/:eventId", async (req, res, next) => {
