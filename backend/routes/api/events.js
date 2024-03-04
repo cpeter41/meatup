@@ -10,6 +10,7 @@ const {
     Group,
     Venue,
     Attendance,
+    Membership,
 } = require("../../db/models");
 const { Sequelize, EmptyResultError } = require("sequelize");
 const router = express.Router();
@@ -108,23 +109,22 @@ router.get("/:eventId/attendees", async (req, res, next) => {
         include: [
             {
                 model: User,
-                as: "Member",
                 through: {
                     where: { eventId },
                     attributes: ["status"],
                 },
                 attributes: ["id", "firstName", "lastName"],
-                include: [
-                    {
-                        model: Attendance,
-                        attributes: ["status"],
-                    },
-                ],
             },
             {
                 model: Group,
-                where: { organizerId: user.id },
-                attributes: [],
+                attributes: ["organizerId"],
+                include: [
+                    {
+                        model: User,
+                        as: "Member",
+                        through: { attributes: ["status"] },
+                    },
+                ],
             },
         ],
         attributes: [],
@@ -135,22 +135,22 @@ router.get("/:eventId/attendees", async (req, res, next) => {
         return res.status(404).json({ message: "Event couldn't be found" });
 
     foundEvent = foundEvent.toJSON();
-    console.log(foundEvent);
 
-    res.json({ message: "test" });
-    // res.json({ Attendees: foundEvent. })
+    const orgId = foundEvent.Group.organizerId;
+    const isCoHost = false;
+    if (foundEvent.Group.Member[0]) {
+        foundEvent.Group.Member[0].Membership.status === "co-host";
+    }
+    delete foundEvent.Group;
 
-    // const orgId = foundEvent.organizerId;
-    // delete foundEvent.organizerId;
-
-    // // if user isn't organizer...
-    // if (orgId !== user.id) {
-    //     return res.json({
-    //         Members: foundEvent.Member.filter(
-    //             (member) => member.Membership.status !== "pending"
-    //         ),
-    //     });
-    // } else res.json({ Members: foundEvent.Member });
+    // if user isn't organizer...
+    if (orgId !== user.id || !isCoHost) {
+        return res.json({
+            Attendees: foundEvent.Users.filter(
+                (user) => user.Attendance.status !== "pending"
+            ),
+        });
+    } else res.json({ Attendees: foundEvent.Users });
 });
 
 router.get("/:eventId", async (req, res, next) => {

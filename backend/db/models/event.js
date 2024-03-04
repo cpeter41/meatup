@@ -15,11 +15,15 @@ module.exports = (sequelize, DataTypes) => {
                 through: "Attendance",
                 foreignKey: "eventId",
                 otherKey: "userId",
+                // as: "Attendee",
             });
 
             Event.belongsTo(models.Venue, { foreignKey: "venueId" });
 
-            Event.belongsTo(models.Group, { foreignKey: "groupId", onDelete: "CASCADE" });
+            Event.belongsTo(models.Group, {
+                foreignKey: "groupId",
+                onDelete: "CASCADE",
+            });
         }
     }
     Event.init(
