@@ -12,7 +12,7 @@ const {
     Attendance,
     Membership,
 } = require("../../db/models");
-const { Sequelize, EmptyResultError } = require("sequelize");
+const { Sequelize, EmptyResultError, Op } = require("sequelize");
 const router = express.Router();
 
 router.post("/:eventId/images", async (req, res, next) => {
@@ -222,14 +222,13 @@ router.put("/:eventId/attendance", async (req, res, next) => {
                 as: "Member",
                 through: {
                     where: { userId },
-                    attributes: ['status']
-                }
-            }
-        ]
+                    attributes: ["status"],
+                },
+            },
+        ],
     });
     if (!foundUser)
         return res.status(404).json({ message: "User couldn't be found" });
-    // console.log(foundUser.toJSON().Member[0].Membership.status);
 
     const foundAttendee = await Attendance.findOne({
         where: {
@@ -334,7 +333,10 @@ router.get("/:eventId", async (req, res, next) => {
 });
 
 router.get("/", async (req, res, next) => {
-    const events = await Event.findAll({
+    let { page, size, name, type, startDate } = req.query;
+    const err = { message: "Bad Request", errors: {} };
+
+    const options = {
         attributes: [
             "id",
             "groupId",
@@ -354,7 +356,44 @@ router.get("/", async (req, res, next) => {
                 attributes: ["id", "city", "state"],
             },
         ],
-    });
+        where: {},
+    };
+
+    if (!page) page = 1;
+    else if (isNaN(page) || parseInt(page) < 1 || parseInt(page) > 10)
+        err.errors.page = "Page must be greater than or equal to 1";
+    options.offset = size * (parseInt(page) - 1);
+
+    if (!size) size = 20;
+    else if (isNaN(size) || parseInt(size) < 1 || parseInt(size) > 20)
+        err.errors.size = "Size must be greater than or equal to 1";
+    options.limit = parseInt(size);
+
+    if (name) {
+        if (typeof name === "string") options.where.name = name;
+        else err.errors.name = "Name must be a string";
+    }
+
+    if (type) {
+        if (type === "Online" || type === "In Person")
+            options.where.type = type;
+        else err.errors.type = "Type must be 'Online' or 'In Person'";
+    }
+
+    if (startDate) {
+        const startDateObject = new Date(startDate);
+        if (
+            Object.prototype.toString.call(startDateObject) === "[object Date]"
+        ) {
+            if (isNaN(startDateObject)) {
+                err.errors.startDate = "Start date must be a valid datetime";
+            } else options.where.startDate = { [Op.gte]: startDate };
+        } else err.errors.startDate = "Start date must be a valid datetime";
+    }
+
+    if (Object.keys(err.errors).length) return res.status(400).json(err);
+
+    const events = await Event.findAll(options);
 
     // consider using aggregate fn instead of for loop
     for (let event of events) {
@@ -369,7 +408,11 @@ router.get("/", async (req, res, next) => {
         else event.dataValues.previewImage = null;
     }
 
-    res.json({ Events: events });
+    res.json({
+        Events: events,
+        page: parseInt(page),
+        size: parseInt(size),
+    });
 });
 
 module.exports = router;
