@@ -260,7 +260,7 @@ router.delete(
         if (!foundGroup)
             return res.status(404).json({ message: "Group couldn't be found" });
 
-        if (foundGroup.organizerId !== user.id) next(new Error("Forbidden"));
+        if (foundGroup.organizerId !== user.id) return next(new Error("Forbidden"));
 
         const foundMember = await Membership.findOne({
             where: {
@@ -289,7 +289,7 @@ router.post("/:groupId/images", requireAuth, async (req, res, next) => {
     if (!foundGroup)
         return res.status(404).json({ message: "Group couldn't be found" });
     foundGroup = foundGroup.toJSON();
-    if (foundGroup.organizerId !== user.id) next(new Error("Forbidden"));
+    if (foundGroup.organizerId !== user.id) return next(new Error("Forbidden"));
 
     const { url, preview } = req.body;
 
@@ -458,7 +458,7 @@ router.put("/:groupId", requireAuth, async (req, res, next) => {
     const foundGroup = await Group.findByPk(groupId);
     if (!foundGroup)
         return res.status(404).json({ message: "Group couldn't be found" });
-    if (foundGroup.organizerId !== user.id) next(new Error("Forbidden"));
+    if (foundGroup.organizerId !== user.id) return next(new Error("Forbidden"));
 
     if (!validateGroupData(req, res)) return;
 
@@ -482,7 +482,7 @@ router.delete("/:groupId", requireAuth, async (req, res, next) => {
     if (!foundGroup)
         return res.status(404).json({ message: "Group couldn't be found" });
 
-    if (foundGroup.organizerId !== user.id) next(new Error("Forbidden"));
+    if (foundGroup.organizerId !== user.id) return next(new Error("Forbidden"));
 
     await foundGroup.destroy();
 
