@@ -41,7 +41,7 @@ router.post("/", async (req, res, next) => {
 
     const hashedPassword = bcrypt.hashSync(password);
 
-    const foundUser = User.findOne({ where: { email, username } });
+    const foundUser = await User.findOne({ where: { email, username } });
     console.log("FOUND_USER:", foundUser);
 
     if (foundUser.email === email) {
