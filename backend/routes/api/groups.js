@@ -226,6 +226,7 @@ router.put("/:groupId/membership", requireAuth, async (req, res, next) => {
 
     if (
         (foundMember.status === "pending" &&
+            status === "member" &&
             (foundGroup.organizerId === user.id || isCoHost)) ||
         (foundMember.status === "member" && foundGroup.organizerId === user.id)
     )
@@ -314,7 +315,7 @@ router.get("/:groupId/venues", requireAuth, async (req, res, next) => {
         where: { "$Group.id$": groupId },
     });
 
-    for (let venue in venues) {
+    for (let venue of venues) {
         venue.lat = parseInt(venue.lat);
         venue.lng = parseInt(venue.lng);
     }
@@ -439,7 +440,7 @@ router.post("/:groupId/events", requireAuth, async (req, res, next) => {
         name: newEvent.name,
         type: newEvent.type,
         capacity: newEvent.capacity,
-        price: newEvent.price,
+        price: parseInt(newEvent.price),
         description: newEvent.description,
         startDate: newEvent.startDate,
         endDate: newEvent.endDate,
