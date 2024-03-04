@@ -63,7 +63,7 @@ router.get("/:groupId", async (req, res, next) => {
     let { groupId } = req.params;
     groupId = parseInt(groupId);
 
-    const foundGroup = await Group.findByPk(groupId, {
+    let foundGroup = await Group.findByPk(groupId, {
         include: [
             { model: User, as: "Member", attributes: [] },
             { model: GroupImage, attributes: ["id", "url", "preview"] },
@@ -75,17 +75,17 @@ router.get("/:groupId", async (req, res, next) => {
             { model: Venue },
         ],
     });
+
     if (!foundGroup)
         return res.status(404).json({ message: "Group couldn't be found" });
 
     foundGroup.dataValues.numMembers = await foundGroup.countMember();
-    if (foundGroup.dataValues.Venue.length) {
-        foundGroup.dataValues.Venue.lat = parseFloat(
-            foundGroup.dataValues.Venue.lat
-        );
-        foundGroup.dataValues.Venue.lng = parseFloat(
-            foundGroup.dataValues.Venue.lng
-        );
+    foundGroup = foundGroup.toJSON();
+    console.log(foundGroup);
+
+    if (foundGroup.Venue) {
+        foundGroup.Venue.lat = parseFloat(foundGroup.Venue.lat);
+        foundGroup.Venue.lng = parseFloat(foundGroup.Venue.lng);
     }
 
     res.json(foundGroup);
@@ -254,7 +254,7 @@ router.delete(
         const foundGroup = await Group.findByPk(groupId);
         if (!foundGroup)
             return res.status(404).json({ message: "Group couldn't be found" });
-        
+
         if (foundGroup.organizerId !== user.id) next(new Error("Forbidden"));
 
         const foundMember = await Membership.findOne({
@@ -478,7 +478,6 @@ router.delete("/:groupId", requireAuth, async (req, res, next) => {
         return res.status(404).json({ message: "Group couldn't be found" });
 
     if (foundGroup.organizerId !== user.id) next(new Error("Forbidden"));
-
 
     await foundGroup.destroy();
 
