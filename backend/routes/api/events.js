@@ -375,9 +375,9 @@ router.get("/", async (req, res, next) => {
     }
 
     if (type) {
-        if (type === "Online" || type === "In Person")
+        if (type === "Online" || type === "In person")
             options.where.type = type;
-        else err.errors.type = "Type must be 'Online' or 'In Person'";
+        else err.errors.type = "Type must be 'Online' or 'In person'";
     }
 
     if (startDate) {
