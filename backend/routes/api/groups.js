@@ -209,6 +209,33 @@ router.put("/:groupId/membership", async (req, res, next) => {
     });
 });
 
+router.delete("/:groupId/membership/:memberId", async (req, res, next) => {
+    const { groupId, memberId } = req.params;
+
+    const foundUser = await User.findByPk(memberId);
+    if (!foundUser)
+        return res.status(404).json({ message: "User couldn't be found" });
+    const foundGroup = await Group.findByPk(groupId);
+    if (!foundGroup)
+        return res.status(404).json({ message: "Group couldn't be found" });
+
+    const foundMember = await Membership.findOne({
+        where: {
+            groupId,
+            userId: memberId,
+        },
+    });
+
+    if (!foundMember)
+        return res
+            .status(404)
+            .json({ message: "Membership does not exist for this User" });
+
+    await foundMember.destroy();
+
+    res.json({ message: "Successfully deleted membership from group" });
+});
+
 router.post("/:groupId/images", async (req, res, next) => {
     let { groupId } = req.params;
     groupId = parseInt(groupId);
