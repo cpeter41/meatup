@@ -13,6 +13,7 @@ const {
     EventImage,
     Membership,
 } = require("../../db/models");
+const { requireAuth } = require("../../utils/auth.js");
 const { Op } = require("sequelize");
 const router = express.Router();
 
@@ -30,7 +31,7 @@ const setPreviewImage = (groups) => {
 };
 
 // GET api/groups/current
-router.get("/current", async (req, res, next) => {
+router.get("/current", requireAuth, async (req, res, next) => {
     const { user } = req;
     const groups = await Group.findAll({
         include: [
@@ -117,7 +118,7 @@ router.get("/:groupId/members", async (req, res, next) => {
     } else res.json({ Members: foundGroup.Member });
 });
 
-router.post("/:groupId/membership", async (req, res, next) => {
+router.post("/:groupId/membership", requireAuth, async (req, res, next) => {
     const { user } = req;
     let { groupId } = req.params;
     groupId = parseInt(groupId);
@@ -164,7 +165,7 @@ router.post("/:groupId/membership", async (req, res, next) => {
     });
 });
 
-router.put("/:groupId/membership", async (req, res, next) => {
+router.put("/:groupId/membership", requireAuth, async (req, res, next) => {
     const groupId = parseInt(req.params.groupId);
     const { memberId, status } = req.body;
 
@@ -209,7 +210,7 @@ router.put("/:groupId/membership", async (req, res, next) => {
     });
 });
 
-router.delete("/:groupId/membership/:memberId", async (req, res, next) => {
+router.delete("/:groupId/membership/:memberId", requireAuth, async (req, res, next) => {
     const { groupId, memberId } = req.params;
 
     const foundUser = await User.findByPk(memberId);
@@ -236,7 +237,7 @@ router.delete("/:groupId/membership/:memberId", async (req, res, next) => {
     res.json({ message: "Successfully deleted membership from group" });
 });
 
-router.post("/:groupId/images", async (req, res, next) => {
+router.post("/:groupId/images", requireAuth, async (req, res, next) => {
     let { groupId } = req.params;
     groupId = parseInt(groupId);
 
@@ -255,7 +256,7 @@ router.post("/:groupId/images", async (req, res, next) => {
     });
 });
 
-router.get("/:groupId/venues", async (req, res, next) => {
+router.get("/:groupId/venues", requireAuth, async (req, res, next) => {
     let { groupId } = req.params;
     groupId = parseInt(groupId);
 
@@ -272,7 +273,7 @@ router.get("/:groupId/venues", async (req, res, next) => {
     res.json({ Venues: venues });
 });
 
-router.post("/:groupId/venues", async (req, res, next) => {
+router.post("/:groupId/venues", requireAuth, async (req, res, next) => {
     let { groupId } = req.params;
     groupId = parseInt(groupId);
     const foundGroup = await Group.findByPk(groupId);
@@ -345,7 +346,7 @@ router.get("/:groupId/events", async (req, res, next) => {
     res.json({ Events: events });
 });
 
-router.post("/:groupId/events", async (req, res, next) => {
+router.post("/:groupId/events", requireAuth, async (req, res, next) => {
     let { groupId } = req.params;
     groupId = parseInt(groupId);
 
@@ -396,7 +397,7 @@ router.post("/:groupId/events", async (req, res, next) => {
     });
 });
 
-router.put("/:groupId", async (req, res, next) => {
+router.put("/:groupId", requireAuth, async (req, res, next) => {
     const { name, about, type, private, city, state } = req.body;
     const { groupId } = req.params;
     const foundGroup = await Group.findByPk(groupId);
@@ -417,7 +418,7 @@ router.put("/:groupId", async (req, res, next) => {
     res.json(foundGroup);
 });
 
-router.delete("/:groupId", async (req, res, next) => {
+router.delete("/:groupId", requireAuth, async (req, res, next) => {
     const { groupId } = req.params;
 
     const foundGroup = await Group.findByPk(groupId);
@@ -451,7 +452,7 @@ router.get("/", async (req, res, next) => {
     res.json({ Groups: groups });
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/", requireAuth, async (req, res, next) => {
     const { name, about, type, private, city, state } = req.body;
     const { user } = req;
 

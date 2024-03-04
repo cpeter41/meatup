@@ -1,14 +1,14 @@
 const express = require("express");
 const { validateVenueData } = require("../../utils/old_validators");
 const { Group, Venue, Event } = require("../../db/models");
-// const { Op } = require("sequelize");
+const { requireAuth } = require("../../utils/auth.js");
 const router = express.Router();
 
 router.post("/test", function (req, res) {
     res.json({ requestBody: req.body });
 });
 
-router.put("/:venueId", async (req, res, next) => {
+router.put("/:venueId", requireAuth, async (req, res, next) => {
     const { address, city, state, lat, lng } = req.body;
     const { venueId } = req.params;
 

@@ -1,8 +1,5 @@
 const express = require("express");
-const {
-    validateVenueData,
-    validateEventData,
-} = require("../../utils/old_validators");
+const { validateEventData } = require("../../utils/old_validators");
 const {
     Event,
     EventImage,
@@ -10,12 +7,12 @@ const {
     Group,
     Venue,
     Attendance,
-    Membership,
 } = require("../../db/models");
 const { Sequelize, EmptyResultError, Op } = require("sequelize");
+const { requireAuth } = require("../../utils/auth.js");
 const router = express.Router();
 
-router.post("/:eventId/images", async (req, res, next) => {
+router.post("/:eventId/images", requireAuth, async (req, res, next) => {
     let { eventId } = req.params;
     eventId = parseInt(eventId);
 
@@ -40,7 +37,7 @@ router.post("/:eventId/images", async (req, res, next) => {
     });
 });
 
-router.put("/:eventId", async (req, res, next) => {
+router.put("/:eventId", requireAuth, async (req, res, next) => {
     const { eventId } = req.params;
 
     const foundEvent = await Event.findByPk(eventId);
@@ -89,7 +86,7 @@ router.put("/:eventId", async (req, res, next) => {
     });
 });
 
-router.delete("/:eventId", async (req, res, next) => {
+router.delete("/:eventId", requireAuth, async (req, res, next) => {
     const { eventId } = req.params;
 
     const foundEvent = await Event.findByPk(eventId);
@@ -153,7 +150,7 @@ router.get("/:eventId/attendees", async (req, res, next) => {
     } else res.json({ Attendees: foundEvent.Users });
 });
 
-router.post("/:eventId/attendance", async (req, res, next) => {
+router.post("/:eventId/attendance", requireAuth, async (req, res, next) => {
     const { user } = req;
     let { eventId } = req.params;
     eventId = parseInt(eventId);
@@ -199,7 +196,7 @@ router.post("/:eventId/attendance", async (req, res, next) => {
     });
 });
 
-router.put("/:eventId/attendance", async (req, res, next) => {
+router.put("/:eventId/attendance", requireAuth, async (req, res, next) => {
     const eventId = parseInt(req.params.eventId);
     const { userId, status } = req.body;
 
@@ -255,7 +252,7 @@ router.put("/:eventId/attendance", async (req, res, next) => {
     });
 });
 
-router.delete("/:eventId/attendance/:userId", async (req, res, next) => {
+router.delete("/:eventId/attendance/:userId", requireAuth, async (req, res, next) => {
     const { eventId, userId } = req.params;
 
     const foundUser = await User.findByPk(userId);

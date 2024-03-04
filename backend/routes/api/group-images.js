@@ -1,8 +1,9 @@
 const express = require("express");
 const { GroupImage } = require("../../db/models");
 const router = express.Router();
+const { requireAuth } = require("../../utils/auth.js");
 
-router.delete("/:imageId", async (req, res, next) => {
+router.delete("/:imageId", requireAuth, async (req, res, next) => {
     const { imageId } = req.params;
     const foundImage = await GroupImage.findByPk(imageId);
     if (!foundImage)
