@@ -67,6 +67,9 @@ app.use((err, req, res, next) => {
 
 // Error formatter
 app.use((err, req, res, next) => {
+    if (err.message === "Forbidden") {
+        res.status(403).json({ message: "Forbidden" });
+    }
     res.status(err.status || 500);
     console.error(err);
     res.json({

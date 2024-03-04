@@ -45,7 +45,7 @@ function validateEventData(req, res) {
         err.errors.type = "Type must be 'Online' or 'In person'";
     if (typeof capacity !== "number" || Math.floor(capacity) !== capacity)
         err.errors.capacity = "Capacity must be an integer";
-    if (isNaN(parseFloat(price))) err.errors.price = "Price is invalid";
+    if (isNaN(parseFloat(price)) && parseFloat(price) > 0) err.errors.price = "Price is invalid";
     if (!description) err.errors.description = "Description is required";
     if (startDate < newFormattedDate())
         err.errors.startDate = "Start date must be in the future";

@@ -21,8 +21,8 @@ router.put("/:venueId", requireAuth, async (req, res, next) => {
     foundVenue.address = address;
     foundVenue.city = city;
     foundVenue.state = state;
-    foundVenue.lat = lat;
-    foundVenue.lng = lng;
+    foundVenue.lat = parseFloat(lat);
+    foundVenue.lng = parseFloat(lng);
 
     await foundVenue.save();
 

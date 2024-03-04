@@ -66,7 +66,7 @@ router.get("/:groupId", async (req, res, next) => {
     const foundGroup = await Group.findByPk(groupId, {
         include: [
             { model: User, as: "Member", attributes: [] },
-            { model: GroupImage },
+            { model: GroupImage, attributes: ["id", "url", "preview"] },
             {
                 model: User,
                 as: "Organizer",
@@ -75,8 +75,18 @@ router.get("/:groupId", async (req, res, next) => {
             { model: Venue },
         ],
     });
+    if (!foundGroup)
+        return res.status(404).json({ message: "Group couldn't be found" });
 
     foundGroup.dataValues.numMembers = await foundGroup.countMember();
+    if (foundGroup.dataValues.Venue.length) {
+        foundGroup.dataValues.Venue.lat = parseFloat(
+            foundGroup.dataValues.Venue.lat
+        );
+        foundGroup.dataValues.Venue.lng = parseFloat(
+            foundGroup.dataValues.Venue.lng
+        );
+    }
 
     res.json(foundGroup);
 });
@@ -168,6 +178,7 @@ router.post("/:groupId/membership", requireAuth, async (req, res, next) => {
 router.put("/:groupId/membership", requireAuth, async (req, res, next) => {
     const groupId = parseInt(req.params.groupId);
     const { memberId, status } = req.body;
+    const { user } = req;
 
     if (status === "pending")
         return res.status(400).json({
@@ -177,7 +188,16 @@ router.put("/:groupId/membership", requireAuth, async (req, res, next) => {
             },
         });
 
-    const foundGroup = await Group.findByPk(groupId);
+    const foundGroup = await Group.findByPk(groupId, {
+        include: [
+            {
+                model: User,
+                as: "Member",
+                through: { attributes: ["status"] },
+            },
+        ],
+    });
+
     if (!foundGroup)
         return res.status(404).json({ message: "Group couldn't be found" });
 
@@ -198,7 +218,18 @@ router.put("/:groupId/membership", requireAuth, async (req, res, next) => {
             message: "Membership between the user and the group does not exist",
         });
 
-    foundMember.status = status;
+    let isCoHost = false;
+    for (let member in foundGroup.Member) {
+        if ((member.userId = user.id && member.status === "co-host"))
+            isCoHost = true;
+    }
+
+    if (
+        (foundMember.status === "pending" &&
+            (foundGroup.organizerId === user.id || isCoHost)) ||
+        (foundMember.status === "member" && foundGroup.organizerId === user.id)
+    )
+        foundMember.status = status;
 
     await foundMember.save();
 
@@ -210,40 +241,50 @@ router.put("/:groupId/membership", requireAuth, async (req, res, next) => {
     });
 });
 
-router.delete("/:groupId/membership/:memberId", requireAuth, async (req, res, next) => {
-    const { groupId, memberId } = req.params;
+router.delete(
+    "/:groupId/membership/:memberId",
+    requireAuth,
+    async (req, res, next) => {
+        const { groupId, memberId } = req.params;
+        const { user } = req;
 
-    const foundUser = await User.findByPk(memberId);
-    if (!foundUser)
-        return res.status(404).json({ message: "User couldn't be found" });
-    const foundGroup = await Group.findByPk(groupId);
-    if (!foundGroup)
-        return res.status(404).json({ message: "Group couldn't be found" });
+        const foundUser = await User.findByPk(memberId);
+        if (!foundUser)
+            return res.status(404).json({ message: "User couldn't be found" });
+        const foundGroup = await Group.findByPk(groupId);
+        if (!foundGroup)
+            return res.status(404).json({ message: "Group couldn't be found" });
+        
+        if (foundGroup.organizerId !== user.id) next(new Error("Forbidden"));
 
-    const foundMember = await Membership.findOne({
-        where: {
-            groupId,
-            userId: memberId,
-        },
-    });
+        const foundMember = await Membership.findOne({
+            where: {
+                groupId,
+                userId: memberId,
+            },
+        });
 
-    if (!foundMember)
-        return res
-            .status(404)
-            .json({ message: "Membership does not exist for this User" });
+        if (!foundMember)
+            return res
+                .status(404)
+                .json({ message: "Membership does not exist for this User" });
 
-    await foundMember.destroy();
+        await foundMember.destroy();
 
-    res.json({ message: "Successfully deleted membership from group" });
-});
+        res.json({ message: "Successfully deleted membership from group" });
+    }
+);
 
 router.post("/:groupId/images", requireAuth, async (req, res, next) => {
     let { groupId } = req.params;
     groupId = parseInt(groupId);
+    const { user } = req;
 
-    const foundGroup = await Group.findByPk(groupId);
+    let foundGroup = await Group.findByPk(groupId);
     if (!foundGroup)
         return res.status(404).json({ message: "Group couldn't be found" });
+    foundGroup = foundGroup.toJSON();
+    if (foundGroup.organizerId !== user.id) next(new Error("Forbidden"));
 
     const { url, preview } = req.body;
 
@@ -259,6 +300,9 @@ router.post("/:groupId/images", requireAuth, async (req, res, next) => {
 router.get("/:groupId/venues", requireAuth, async (req, res, next) => {
     let { groupId } = req.params;
     groupId = parseInt(groupId);
+    const foundGroup = await Group.findByPk(groupId);
+    if (!foundGroup)
+        res.status(404).json({ message: "Group couldn't be found" });
 
     const venues = await Venue.findAll({
         include: [
@@ -269,6 +313,11 @@ router.get("/:groupId/venues", requireAuth, async (req, res, next) => {
         ],
         where: { "$Group.id$": groupId },
     });
+
+    for (let venue in venues) {
+        venue.lat = parseInt(venue.lat);
+        venue.lng = parseInt(venue.lng);
+    }
 
     res.json({ Venues: venues });
 });
@@ -377,7 +426,7 @@ router.post("/:groupId/events", requireAuth, async (req, res, next) => {
         name,
         type,
         capacity,
-        price,
+        price: parseFloat(price),
         description,
         startDate,
         endDate,
@@ -399,10 +448,12 @@ router.post("/:groupId/events", requireAuth, async (req, res, next) => {
 
 router.put("/:groupId", requireAuth, async (req, res, next) => {
     const { name, about, type, private, city, state } = req.body;
+    const { user } = req;
     const { groupId } = req.params;
     const foundGroup = await Group.findByPk(groupId);
     if (!foundGroup)
         return res.status(404).json({ message: "Group couldn't be found" });
+    if (foundGroup.organizerId !== user.id) next(new Error("Forbidden"));
 
     if (!validateGroupData(req, res)) return;
 
@@ -420,10 +471,14 @@ router.put("/:groupId", requireAuth, async (req, res, next) => {
 
 router.delete("/:groupId", requireAuth, async (req, res, next) => {
     const { groupId } = req.params;
+    const { user } = req;
 
     const foundGroup = await Group.findByPk(groupId);
     if (!foundGroup)
         return res.status(404).json({ message: "Group couldn't be found" });
+
+    if (foundGroup.organizerId !== user.id) next(new Error("Forbidden"));
+
 
     await foundGroup.destroy();
 

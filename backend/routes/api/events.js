@@ -252,32 +252,36 @@ router.put("/:eventId/attendance", requireAuth, async (req, res, next) => {
     });
 });
 
-router.delete("/:eventId/attendance/:userId", requireAuth, async (req, res, next) => {
-    const { eventId, userId } = req.params;
+router.delete(
+    "/:eventId/attendance/:userId",
+    requireAuth,
+    async (req, res, next) => {
+        const { eventId, userId } = req.params;
 
-    const foundUser = await User.findByPk(userId);
-    if (!foundUser)
-        return res.status(404).json({ message: "User couldn't be found" });
-    const foundGroup = await Event.findByPk(eventId);
-    if (!foundGroup)
-        return res.status(404).json({ message: "Event couldn't be found" });
+        const foundUser = await User.findByPk(userId);
+        if (!foundUser)
+            return res.status(404).json({ message: "User couldn't be found" });
+        const foundGroup = await Event.findByPk(eventId);
+        if (!foundGroup)
+            return res.status(404).json({ message: "Event couldn't be found" });
 
-    const foundAttendee = await Attendance.findOne({
-        where: {
-            eventId,
-            userId,
-        },
-    });
+        const foundAttendee = await Attendance.findOne({
+            where: {
+                eventId,
+                userId,
+            },
+        });
 
-    if (!foundAttendee)
-        return res
-            .status(404)
-            .json({ message: "Attendance does not exist for this User" });
+        if (!foundAttendee)
+            return res
+                .status(404)
+                .json({ message: "Attendance does not exist for this User" });
 
-    await foundAttendee.destroy();
+        await foundAttendee.destroy();
 
-    res.json({ message: "Successfully deleted attendance from event" });
-});
+        res.json({ message: "Successfully deleted attendance from event" });
+    }
+);
 
 router.get("/:eventId", async (req, res, next) => {
     const { eventId } = req.params;
@@ -367,7 +371,8 @@ router.get("/", async (req, res, next) => {
     options.limit = parseInt(size);
 
     if (name) {
-        if (typeof name === "string" && isNaN(parseInt(name))) options.where.name = name;
+        if (typeof name === "string" && isNaN(parseInt(name)))
+            options.where.name = name;
         else err.errors.name = "Name must be a string";
     }
 
@@ -390,6 +395,19 @@ router.get("/", async (req, res, next) => {
 
     if (Object.keys(err.errors).length) return res.status(400).json(err);
 
+    console.log(
+        "----------------------------------OPTIONS----------------------------------",
+        "----------------------------------OPTIONS----------------------------------",
+        "----------------------------------OPTIONS----------------------------------",
+        "----------------------------------OPTIONS----------------------------------",
+        "----------------------------------OPTIONS----------------------------------",
+        "----------------------------------OPTIONS----------------------------------",
+        "----------------------------------OPTIONS----------------------------------",
+        "----------------------------------OPTIONS----------------------------------",
+        "----------------------------------OPTIONS----------------------------------",
+        "----------------------------------OPTIONS----------------------------------",
+        options
+    );
     const events = await Event.findAll(options);
 
     // consider using aggregate fn instead of for loop
