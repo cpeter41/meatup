@@ -37,7 +37,7 @@ router.post("/", async (req, res, next) => {
     if (!username) err.errors.lastName = "Last Name is required";
     if (!email.includes("@") || email.includes(".")) err.errors.lastName = "Invalid email";
 
-    if (err.errors.length) return res.status(400).json(err)
+    if (Object.keys(err.errors).length) return res.status(400).json(err);
 
     const hashedPassword = bcrypt.hashSync(password);
 
