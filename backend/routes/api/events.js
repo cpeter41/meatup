@@ -363,7 +363,7 @@ router.get("/", async (req, res, next) => {
     if (!page) page = 1;
     else if (isNaN(page) || parseInt(page) < 1 || parseInt(page) > 10)
         err.errors.page = "Page must be greater than or equal to 1";
-    options.offset = size * (parseInt(page) - 1);
+    options.offset = parseInt(size) * (parseInt(page) - 1);
 
     if (!size) size = 20;
     else if (isNaN(size) || parseInt(size) < 1 || parseInt(size) > 20)
