@@ -44,12 +44,12 @@ router.post("/", async (req, res, next) => {
     const foundUser = await User.findOne({ where: { email, username } });
     console.log("FOUND_USER:", foundUser);
 
-    if (foundUser.email === email) {
+    if (foundUser && foundUser.email === email) {
         const err = new Error("User already exists");
         err.title = "User already exists";
         err.errors = { email: "User with that email already exists" };
         next(err);
-    } else if (foundUser.username === username) {
+    } else if (foundUser && foundUser.username === username) {
         const err = new Error("User already exists");
         err.title = "User already exists";
         err.errors = { email: "User with that username already exists" };
