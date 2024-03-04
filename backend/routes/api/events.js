@@ -363,11 +363,12 @@ router.get("/", async (req, res, next) => {
     if (!page) page = 1;
     else if (isNaN(page) || parseInt(page) < 1 || parseInt(page) > 10)
         err.errors.page = "Page must be greater than or equal to 1";
-    options.offset = parseInt(size) * (parseInt(page) - 1);
 
     if (!size) size = 20;
     else if (isNaN(size) || parseInt(size) < 1 || parseInt(size) > 20)
         err.errors.size = "Size must be greater than or equal to 1";
+
+    options.offset = parseInt(size) * (parseInt(page) - 1);
     options.limit = parseInt(size);
 
     if (name) {
@@ -396,15 +397,6 @@ router.get("/", async (req, res, next) => {
     if (Object.keys(err.errors).length) return res.status(400).json(err);
 
     console.log(
-        "----------------------------------OPTIONS----------------------------------",
-        "----------------------------------OPTIONS----------------------------------",
-        "----------------------------------OPTIONS----------------------------------",
-        "----------------------------------OPTIONS----------------------------------",
-        "----------------------------------OPTIONS----------------------------------",
-        "----------------------------------OPTIONS----------------------------------",
-        "----------------------------------OPTIONS----------------------------------",
-        "----------------------------------OPTIONS----------------------------------",
-        "----------------------------------OPTIONS----------------------------------",
         "----------------------------------OPTIONS----------------------------------",
         options
     );
