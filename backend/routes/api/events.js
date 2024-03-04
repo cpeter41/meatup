@@ -145,7 +145,7 @@ router.get("/:eventId/attendees", async (req, res, next) => {
     delete foundEvent.Group;
 
     // if user isn't organizer...
-    if (orgId !== user.id || !isCoHost) {
+    if (orgId !== user.id && !isCoHost) {
         return res.json({
             Attendees: foundEvent.Users.filter(
                 (user) => user.Attendance.status !== "pending"
