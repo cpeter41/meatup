@@ -6,6 +6,7 @@ const { User } = require("../../db/models");
 
 const { check } = require("express-validator");
 const { handleValidationErrors } = require("../../utils/validation");
+const { Op } = require("sequelize");
 
 const router = express.Router();
 
@@ -41,7 +42,9 @@ router.post("/", async (req, res, next) => {
 
     const hashedPassword = bcrypt.hashSync(password);
 
-    const foundUser = await User.findOne({ where: { email, username } });
+    const foundUser = await User.findOne({
+        where: { [Op.or]: [{ email }, { username }] },
+    });
     console.log("FOUND_USER:", foundUser);
 
     if (foundUser && foundUser.email === email) {
