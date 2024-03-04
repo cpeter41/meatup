@@ -158,8 +158,54 @@ router.post("/:groupId/membership", async (req, res, next) => {
     });
 
     res.json({
-        memberId: newMember.id,
+        groupId: newMember.groupId,
+        memberId: newMember.userId,
         status: newMember.status,
+    });
+});
+
+router.put("/:groupId/membership", async (req, res, next) => {
+    const groupId = parseInt(req.params.groupId);
+    const { memberId, status } = req.body;
+
+    if (status === "pending")
+        return res.status(400).json({
+            message: "Bad Request",
+            errors: {
+                status: "Cannot change a membership status to pending",
+            },
+        });
+
+    const foundGroup = await Group.findByPk(groupId);
+    if (!foundGroup)
+        return res.status(404).json({ message: "Group couldn't be found" });
+
+    const foundUser = await User.findByPk(memberId);
+    if (!foundUser)
+        return res.status(404).json({ message: "User couldn't be found" });
+
+    const foundMember = await Membership.findOne({
+        where: {
+            userId: memberId,
+            groupId,
+        },
+        attributes: ["id", "userId", "groupId", "status"],
+    });
+
+    if (!foundMember)
+        return res.status(404).json({
+            message: "Membership between the user and the group does not exist",
+        });
+
+    foundMember.status = status;
+
+    await foundMember.save();
+
+    res.json({
+        id: foundMember.id,
+        groupId: foundMember.groupId,
+        memberId: foundMember.userId,
+        status: foundMember.status,
     });
 });
 
