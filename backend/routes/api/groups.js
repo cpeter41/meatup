@@ -224,7 +224,7 @@ router.put("/:groupId/membership", requireAuth, async (req, res, next) => {
 
     let isCoHost = false;
     // console.log(foundGroup.Member);
-    if (user.id === 7 && status === 'co-host') console.log(foundGroup.Member);
+    if (user.id == 7 && status === 'co-host') console.log(foundGroup.Member);
     for (let member of foundGroup.Member) {
         if ((member.userId = user.id && member.Membership.status === "co-host"))
             isCoHost = true;
