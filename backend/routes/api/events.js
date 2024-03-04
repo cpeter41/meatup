@@ -153,6 +153,52 @@ router.get("/:eventId/attendees", async (req, res, next) => {
     } else res.json({ Attendees: foundEvent.Users });
 });
 
+router.post("/:eventId/attendance", async (req, res, next) => {
+    const { user } = req;
+    let { eventId } = req.params;
+    eventId = parseInt(eventId);
+
+    const foundEvent = await Event.findByPk(eventId, {
+        include: [
+            {
+                model: User,
+                through: {
+                    where: { eventId },
+                    attributes: ["id", "status"],
+                },
+            },
+        ],
+    });
+    if (!foundEvent)
+        return res.status(404).json({ message: "Event couldn't be found" });
+
+    const existingUser = foundEvent.Users.find(
+        (attendee) => attendee.id === user.id
+    );
+    if (existingUser) {
+        if (existingUser.Attendance.status === "pending") {
+            return res
+                .status(400)
+                .json({ message: "Attendance has already been requested" });
+        } else
+            return res
+                .status(400)
+                .json({ message: "User is already an attendee of the event" });
+    }
+
+    const newAttendee = await Attendance.create({
+        eventId,
+        userId: user.id,
+        status: "pending",
+    });
+
+    res.json({
+        eventId: newAttendee.eventId,
+        userId: newAttendee.userId,
+        status: newAttendee.status,
+    });
+});
+
 router.get("/:eventId", async (req, res, next) => {
     const { eventId } = req.params;
     const foundEvent = await Event.findByPk(eventId, {
