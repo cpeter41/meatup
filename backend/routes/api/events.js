@@ -3,7 +3,14 @@ const {
     validateVenueData,
     validateEventData,
 } = require("../../utils/old_validators");
-const { Event, EventImage, User, Group, Venue } = require("../../db/models");
+const {
+    Event,
+    EventImage,
+    User,
+    Group,
+    Venue,
+    Attendance,
+} = require("../../db/models");
 const { Sequelize, EmptyResultError } = require("sequelize");
 const router = express.Router();
 
@@ -36,7 +43,8 @@ router.put("/:eventId", async (req, res, next) => {
     const { eventId } = req.params;
 
     const foundEvent = await Event.findByPk(eventId);
-    if (!foundEvent) return res.status(404).json({ message: "Event couldn't be found" });
+    if (!foundEvent)
+        return res.status(404).json({ message: "Event couldn't be found" });
 
     const {
         venueId,
@@ -50,7 +58,8 @@ router.put("/:eventId", async (req, res, next) => {
     } = req.body;
 
     const foundVenue = await Venue.findByPk(venueId);
-    if (!foundVenue) return res.status(404).json({ message: "Venue couldn't be found" });
+    if (!foundVenue)
+        return res.status(404).json({ message: "Venue couldn't be found" });
 
     if (!validateEventData(req, res)) return;
 
@@ -83,11 +92,65 @@ router.delete("/:eventId", async (req, res, next) => {
     const { eventId } = req.params;
 
     const foundEvent = await Event.findByPk(eventId);
-    if (!foundEvent) return res.status(404).json({ message: "Event couldn't be found" });
+    if (!foundEvent)
+        return res.status(404).json({ message: "Event couldn't be found" });
 
     await foundEvent.destroy();
 
     res.json({ message: "Successfully deleted" });
+});
+
+router.get("/:eventId/attendees", async (req, res, next) => {
+    const { eventId } = req.params;
+    const { user } = req;
+
+    const options = {
+        include: [
+            {
+                model: User,
+                as: "Member",
+                through: {
+                    where: { eventId },
+                    attributes: ["status"],
+                },
+                attributes: ["id", "firstName", "lastName"],
+                include: [
+                    {
+                        model: Attendance,
+                        attributes: ["status"],
+                    },
+                ],
+            },
+            {
+                model: Group,
+                where: { organizerId: user.id },
+                attributes: [],
+            },
+        ],
+        attributes: [],
+    };
+
+    let foundEvent = await Event.findByPk(eventId, options);
+    if (!foundEvent)
+        return res.status(404).json({ message: "Event couldn't be found" });
+
+    foundEvent = foundEvent.toJSON();
+    console.log(foundEvent);
+
+    res.json({ message: "test" });
+    // res.json({ Attendees: foundEvent. })
+
+    // const orgId = foundEvent.organizerId;
+    // delete foundEvent.organizerId;
+
+    // // if user isn't organizer...
+    // if (orgId !== user.id) {
+    //     return res.json({
+    //         Members: foundEvent.Member.filter(
+    //             (member) => member.Membership.status !== "pending"
+    //         ),
+    //     });
+    // } else res.json({ Members: foundEvent.Member });
 });
 
 router.get("/:eventId", async (req, res, next) => {
