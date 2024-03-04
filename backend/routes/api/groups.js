@@ -188,7 +188,7 @@ router.put("/:groupId/membership", requireAuth, async (req, res, next) => {
             },
         });
 
-    const foundGroup = await Group.findByPk(groupId, {
+    let foundGroup = await Group.findByPk(groupId, {
         include: [
             {
                 model: User,
@@ -200,6 +200,8 @@ router.put("/:groupId/membership", requireAuth, async (req, res, next) => {
 
     if (!foundGroup)
         return res.status(404).json({ message: "Group couldn't be found" });
+
+    foundGroup = foundGroup.toJSON();
 
     const foundUser = await User.findByPk(memberId);
     if (!foundUser)
@@ -219,16 +221,15 @@ router.put("/:groupId/membership", requireAuth, async (req, res, next) => {
         });
 
     let isCoHost = false;
-    for (let member in foundGroup.Member) {
-        if ((member.userId = user.id && member.status === "co-host"))
+    // console.log(foundGroup.Member);
+    for (let member of foundGroup.Member) {
+        if ((member.userId = user.id && member.Membership.status === "co-host"))
             isCoHost = true;
     }
 
     if (
-        (foundMember.status === "pending" &&
-            status === "member" &&
-            (foundGroup.organizerId === user.id || isCoHost)) ||
-        (foundMember.status === "member" && foundGroup.organizerId === user.id)
+        foundGroup.organizerId === user.id ||
+        (foundGroup.status === "pending" && status === "member" && isCoHost)
     )
         foundMember.status = status;
 
@@ -316,8 +317,8 @@ router.get("/:groupId/venues", requireAuth, async (req, res, next) => {
     });
 
     for (let venue of venues) {
-        venue.lat = parseInt(venue.lat);
-        venue.lng = parseInt(venue.lng);
+        venue.lat = parseFloat(venue.lat);
+        venue.lng = parseFloat(venue.lng);
     }
 
     res.json({ Venues: venues });
@@ -440,7 +441,7 @@ router.post("/:groupId/events", requireAuth, async (req, res, next) => {
         name: newEvent.name,
         type: newEvent.type,
         capacity: newEvent.capacity,
-        price: parseInt(newEvent.price),
+        price: parseFloat(newEvent.price),
         description: newEvent.description,
         startDate: newEvent.startDate,
         endDate: newEvent.endDate,
