@@ -137,9 +137,9 @@ router.get("/:eventId/attendees", async (req, res, next) => {
     foundEvent = foundEvent.toJSON();
 
     const orgId = foundEvent.Group.organizerId;
-    const isCoHost = false;
+    let isCoHost = false;
     if (foundEvent.Group.Member[0]) {
-        foundEvent.Group.Member[0].Membership.status === "co-host";
+        isCoHost = foundEvent.Group.Member[0].Membership.status === "co-host";
     }
     delete foundEvent.Group;
 
