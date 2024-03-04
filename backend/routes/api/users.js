@@ -10,35 +10,41 @@ const { Op } = require("sequelize");
 
 const router = express.Router();
 
-// const validateSignup = [
-//     check("email")
-//         .exists({ checkFalsy: true })
-//         .isEmail()
-//         .withMessage("Please provide a valid email."),
-//     check("username")
-//         .exists({ checkFalsy: true })
-//         .isLength({ min: 4 })
-//         .withMessage("Please provide a username with at least 4 characters."),
-//     check("username")
-//         .not()
-//         .isEmail()
-//         .withMessage("Username cannot be an email."),
-//     check("password")
-//         .exists({ checkFalsy: true })
-//         .isLength({ min: 6 })
-//         .withMessage("Password must be 6 characters or more."),
-//     handleValidationErrors,
-// ];
+const validateSignup = [
+    check("firstName")
+        .exists({ checkFalsy: true })
+        .withMessage("First Name is required."),
+    check("lastName")
+        .exists({ checkFalsy: true })
+        .withMessage("Last Name is required."),
+    check("email")
+        .exists({ checkFalsy: true })
+        .isEmail()
+        .withMessage("Please provide a valid email."),
+    check("username")
+        .exists({ checkFalsy: true })
+        .isLength({ min: 4 })
+        .withMessage("Please provide a username with at least 4 characters."),
+    check("username")
+        .not()
+        .isEmail()
+        .withMessage("Username cannot be an email."),
+    check("password")
+        .exists({ checkFalsy: true })
+        .isLength({ min: 6 })
+        .withMessage("Password must be 6 characters or more."),
+    handleValidationErrors,
+];
 
-router.post("/", async (req, res, next) => {
-    const err = { message: "Bad Request", errors: {} };
+router.post("/", validateSignup, async (req, res, next) => {
+    // const err = { message: "Bad Request", errors: {} };
     const { firstName, lastName, email, username, password } = req.body;
-    if (!firstName) err.errors.firstName = "First Name is required";
-    if (!lastName) err.errors.lastName = "Last Name is required";
-    if (!username) err.errors.lastName = "Last Name is required";
-    if (!email) err.errors.lastName = "Invalid email";
+    // if (!firstName) err.errors.firstName = "First Name is required";
+    // if (!lastName) err.errors.lastName = "Last Name is required";
+    // if (!username) err.errors.username = "Last Name is required";
+    // if (!email) err.errors.email = "Invalid email";
 
-    if (Object.keys(err.errors).length) return res.status(400).json(err);
+    // if (Object.keys(err.errors).length) return res.status(400).json(err);
 
     const hashedPassword = bcrypt.hashSync(password);
 
