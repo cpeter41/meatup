@@ -370,7 +370,7 @@ router.get("/", async (req, res, next) => {
     options.limit = parseInt(size);
 
     if (name) {
-        if (typeof name === "string") options.where.name = name;
+        if (typeof name === "string" && isNaN(parseInt(name))) options.where.name = name;
         else err.errors.name = "Name must be a string";
     }
 
