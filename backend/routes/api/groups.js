@@ -224,9 +224,10 @@ router.put("/:groupId/membership", requireAuth, async (req, res, next) => {
 
     let isCoHost = false;
     // console.log(foundGroup.Member);
-    if (user.id == 7 && status === 'co-host') console.log("RIGHT HERE", foundGroup.Member);
+    if (user.id == 7 && status === "co-host")
+        console.log("RIGHT HERE", foundGroup.Member);
     for (let member of foundGroup.Member) {
-        if ((member.id === user.id && member.Membership.status === "co-host"))
+        if (member.id === user.id && member.Membership.status === "co-host")
             isCoHost = true;
     }
 
@@ -261,7 +262,8 @@ router.delete(
         if (!foundGroup)
             return res.status(404).json({ message: "Group couldn't be found" });
 
-        if (foundGroup.organizerId !== user.id) return next(new Error("Forbidden"));
+        if (foundGroup.organizerId !== user.id)
+            return next(new Error("Forbidden"));
 
         const foundMember = await Membership.findOne({
             where: {
@@ -306,9 +308,21 @@ router.post("/:groupId/images", requireAuth, async (req, res, next) => {
 router.get("/:groupId/venues", requireAuth, async (req, res, next) => {
     let { groupId } = req.params;
     groupId = parseInt(groupId);
-    const foundGroup = await Group.findByPk(groupId);
+    const { user } = req;
+    let foundGroup = await Group.findByPk(groupId, {
+        include: [
+            {
+                model: User,
+                as: "Member",
+                through: { attributes: ["status"] },
+            },
+        ],
+    });
     if (!foundGroup)
         res.status(404).json({ message: "Group couldn't be found" });
+
+    foundGroup = foundGroup.toJSON();
+    console.log(foundGroup);
 
     const venues = await Venue.findAll({
         include: [
