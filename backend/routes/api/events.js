@@ -199,6 +199,7 @@ router.post("/:eventId/attendance", requireAuth, async (req, res, next) => {
 router.put("/:eventId/attendance", requireAuth, async (req, res, next) => {
     const eventId = parseInt(req.params.eventId);
     const { userId, status } = req.body;
+    const { user } = req;
 
     if (status === "pending")
         return res.status(400).json({
@@ -212,7 +213,7 @@ router.put("/:eventId/attendance", requireAuth, async (req, res, next) => {
     if (!foundEvent)
         return res.status(404).json({ message: "Event couldn't be found" });
 
-    const foundUser = await User.findByPk(userId, {
+    let foundUser = await User.findByPk(userId, {
         include: [
             {
                 model: Group,
@@ -239,6 +240,9 @@ router.put("/:eventId/attendance", requireAuth, async (req, res, next) => {
         return res.status(404).json({
             message: "Attendance between the user and the event does not exist",
         });
+
+    foundUser = foundUser.toJSON();
+    if (status === 'co-host') console.log("AJKSDHJAS", foundUser);
 
     foundAttendee.status = status;
 

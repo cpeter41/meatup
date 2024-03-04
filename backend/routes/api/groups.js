@@ -235,6 +235,7 @@ router.put("/:groupId/membership", requireAuth, async (req, res, next) => {
         (foundGroup.status === "pending" && status === "member" && isCoHost)
     )
         foundMember.status = status;
+    else return next(new Error("Forbidden"));
 
     await foundMember.save();
 
