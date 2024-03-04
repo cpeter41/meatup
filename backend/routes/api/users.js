@@ -35,7 +35,7 @@ router.post("/", async (req, res, next) => {
     if (!firstName) err.errors.firstName = "First Name is required";
     if (!lastName) err.errors.lastName = "Last Name is required";
     if (!username) err.errors.lastName = "Last Name is required";
-    if (!email.includes("@") || email.includes(".")) err.errors.lastName = "Invalid email";
+    if (!email || !email.includes("@") || email.includes(".")) err.errors.lastName = "Invalid email";
 
     if (Object.keys(err.errors).length) return res.status(400).json(err);
 

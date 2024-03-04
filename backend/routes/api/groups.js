@@ -83,9 +83,11 @@ router.get("/:groupId", async (req, res, next) => {
     foundGroup = foundGroup.toJSON();
     console.log(foundGroup);
 
-    if (foundGroup.dataValues.Venue && foundGroup.dataValues.Venue.length) {
-        foundGroup.dataValues.Venue.lat = parseFloat(foundGroup.dataValues.Venue.lat);
-        foundGroup.dataValues.Venue.lng = parseFloat(foundGroup.dataValues.Venue.lng);
+    if (foundGroup.Venue && foundGroup.Venue.length) {
+        for (let venue of foundGroup.Venue) {
+            venue.lat = parseFloat(venue.lat);
+            venue.lng = parseFloat(venue.lng);
+        }
     }
 
     res.json(foundGroup);
