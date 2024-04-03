@@ -14,13 +14,33 @@ const router = express.Router();
 
 router.post("/:eventId/images", requireAuth, async (req, res, next) => {
     let { eventId } = req.params;
+    const { user } = req;
     eventId = parseInt(eventId);
 
-    const foundEvent = await Event.findByPk(eventId);
+    let foundEvent = await Event.findByPk(eventId, {
+        include: [
+            { model: Group },
+            {
+                model: User,
+                through: {
+                    where: {
+                        userId: user.id,
+                        status: "attending",
+                    },
+                },
+            },
+        ],
+    });
     if (!foundEvent)
         return res.status(404).json({ message: "Event couldn't be found" });
 
     const { url, preview } = req.body;
+
+    foundEvent = foundEvent.toJSON();
+    const isOrganizer = foundEvent.Group.organizerId === user.id;
+    const isAttending = foundEvent.Users.length > 0;
+
+    if (!isOrganizer && !isAttending) return next(new Error("Forbidden"));
 
     // no validation according to API docs
 
@@ -39,10 +59,29 @@ router.post("/:eventId/images", requireAuth, async (req, res, next) => {
 
 router.put("/:eventId", requireAuth, async (req, res, next) => {
     const { eventId } = req.params;
+    const { user } = req;
 
-    const foundEvent = await Event.findByPk(eventId);
+    const foundEvent = await Event.findByPk(eventId, {
+        include: {
+            model: Group,
+            include: {
+                model: User,
+                as: "Member",
+                where: { id: user.id },
+            },
+        },
+    });
     if (!foundEvent)
         return res.status(404).json({ message: "Event couldn't be found" });
+
+    const isOrganizer = foundEvent.toJSON().Group.organizerId === user.id;
+    let isCoHost = false;
+    if (foundEvent.toJSON().Group.Member.length > 0) {
+        isCoHost =
+            foundEvent.toJSON().Group.Member[0].Membership.status === "co-host";
+    }
+
+    if (!isOrganizer && !isCoHost) return next(new Error("Forbidden"));
 
     const {
         venueId,
@@ -88,10 +127,28 @@ router.put("/:eventId", requireAuth, async (req, res, next) => {
 
 router.delete("/:eventId", requireAuth, async (req, res, next) => {
     const { eventId } = req.params;
+    const { user } = req;
 
-    const foundEvent = await Event.findByPk(eventId);
+    const foundEvent = await Event.findByPk(eventId, {
+        include: {
+            model: Group,
+            include: {
+                model: User,
+                as: "Member",
+                where: { id: user.id },
+            },
+        },
+    });
     if (!foundEvent)
         return res.status(404).json({ message: "Event couldn't be found" });
+
+    const isOrganizer = foundEvent.toJSON().Group.organizerId === user.id;
+    let isCoHost = false;
+    if (foundEvent.toJSON().Group.Member.length > 0)
+        isCoHost =
+            foundEvent.toJSON().Group.Member[0].Membership.status === "co-host";
+
+    if (!isOrganizer && !isCoHost) return next(new Error("Forbidden"));
 
     await foundEvent.destroy();
 
@@ -155,7 +212,7 @@ router.post("/:eventId/attendance", requireAuth, async (req, res, next) => {
     let { eventId } = req.params;
     eventId = parseInt(eventId);
 
-    const foundEvent = await Event.findByPk(eventId, {
+    let foundEvent = await Event.findByPk(eventId, {
         include: [
             {
                 model: User,
@@ -164,14 +221,29 @@ router.post("/:eventId/attendance", requireAuth, async (req, res, next) => {
                     attributes: ["id", "status"],
                 },
             },
+            {
+                model: Group,
+                include: {
+                    model: User,
+                    as: "Member",
+                    through: {
+                        where: { userId: user.id },
+                    },
+                },
+            },
         ],
     });
     if (!foundEvent)
         return res.status(404).json({ message: "Event couldn't be found" });
 
+    foundEvent = foundEvent.toJSON();
+
+    if (foundEvent.Group.Member.length > 0) return next(new Error("Forbidden"));
+
     const existingUser = foundEvent.Users.find(
         (attendee) => attendee.id === user.id
     );
+
     if (existingUser) {
         if (existingUser.Attendance.status === "pending") {
             return res
@@ -201,6 +273,35 @@ router.put("/:eventId/attendance", requireAuth, async (req, res, next) => {
     const { userId, status } = req.body;
     const { user } = req;
 
+    const foundEvent = await Event.findByPk(eventId);
+    if (!foundEvent)
+        return res.status(404).json({ message: "Event couldn't be found" });
+
+    let foundUser = await User.findOne({
+        where: { id: userId },
+        include: [
+            {
+                model: Event,
+                where: { id: eventId },
+            },
+            {
+                model: Group,
+                as: "Member",
+                attributes: ["organizerId"],
+                include: {
+                    model: Event,
+                    where: { id: eventId },
+                },
+            },
+        ],
+    });
+
+    if (!foundUser)
+        return res.status(404).json({ message: "User couldn't be found" });
+    if (foundUser.toJSON().Events.length < 1)
+        return res.status(404).json({
+            message: "Attendance between the user and the event does not exist",
+        });
     if (status === "pending")
         return res.status(400).json({
             message: "Bad Request",
@@ -209,51 +310,70 @@ router.put("/:eventId/attendance", requireAuth, async (req, res, next) => {
             },
         });
 
-    const foundEvent = await Group.findByPk(eventId);
-    if (!foundEvent)
-        return res.status(404).json({ message: "Event couldn't be found" });
+    foundUser = foundUser.toJSON();
 
-    let foundUser = await User.findByPk(userId, {
-        include: [
-            {
-                model: Group,
-                as: "Member",
-                through: {
-                    where: { userId },
-                    attributes: ["status"],
-                },
-            },
-        ],
-    });
-    if (!foundUser)
-        return res.status(404).json({ message: "User couldn't be found" });
+    const isCoHost = foundUser.Member[0].Membership.status === "co-host";
+    const isOrganizer = foundUser.Member[0].organizerId === user.id;
+    if (!isCoHost && !isOrganizer) return next(new Error("Forbidden"));
 
     const foundAttendee = await Attendance.findOne({
-        where: {
-            userId,
-            eventId,
-        },
-        attributes: ["id", "userId", "eventId", "status"],
+        where: { userId, eventId },
     });
 
-    if (!foundAttendee)
-        return res.status(404).json({
-            message: "Attendance between the user and the event does not exist",
-        });
-
-    foundUser = foundUser.toJSON();
-    if (status === 'co-host') console.log("AJKSDHJAS", foundUser);
-
     foundAttendee.status = status;
-
     await foundAttendee.save();
 
-    res.json({
+    return res.json({
         id: foundAttendee.id,
         eventId: foundAttendee.eventId,
         userId: foundAttendee.userId,
         status: foundAttendee.status,
     });
+
+    // const foundEvent = await Group.findByPk(eventId);
+    // if (!foundEvent)
+    //     return res.status(404).json({ message: "Event couldn't be found" });
+
+    // let foundUser = await User.findByPk(userId, {
+    //     include: [
+    //         {
+    //             model: Group,
+    //             as: "Member",
+    //             through: {
+    //                 where: { userId },
+    //                 attributes: ["status"],
+    //             },
+    //         },
+    //     ],
+    // });
+    // if (!foundUser)
+    //     return res.status(404).json({ message: "User couldn't be found" });
+
+    // const foundAttendee = await Attendance.findOne({
+    //     where: {
+    //         userId,
+    //         eventId,
+    //     },
+    //     attributes: ["id", "userId", "eventId", "status"],
+    // });
+
+    // if (!foundAttendee)
+    //     return res.status(404).json({
+    //         message: "Attendance between the user and the event does not exist",
+    //     });
+
+    // foundUser = foundUser.toJSON();
+
+    // foundAttendee.status = status;
+
+    // await foundAttendee.save();
+
+    // res.json({
+    //     id: foundAttendee.id,
+    //     eventId: foundAttendee.eventId,
+    //     userId: foundAttendee.userId,
+    //     status: foundAttendee.status,
+    // });
 });
 
 router.delete(
@@ -261,6 +381,7 @@ router.delete(
     requireAuth,
     async (req, res, next) => {
         const { eventId, userId } = req.params;
+        const { user } = req;
 
         const foundUser = await User.findByPk(userId);
         if (!foundUser)
@@ -280,6 +401,10 @@ router.delete(
             return res
                 .status(404)
                 .json({ message: "Attendance does not exist for this User" });
+
+        const isHost = foundGroup.toJSON().organizerId === user.id;
+        const isOwnUser = foundAttendee.toJSON().userId === user.id;
+        if (!isHost && !isOwnUser) return next(new Error("Forbidden"));
 
         await foundAttendee.destroy();
 

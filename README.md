@@ -1,5 +1,9 @@
 # Meatup
 
+### REMEMBER TO RESET DATABASE BEFORE MONDAY
+
+leeway: the way dates are formatted AND the decimal type (string instead of proper decimal)
+
 ## Database Schema Design
 
 ![meetup-database-schema]
