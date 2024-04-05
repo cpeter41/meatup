@@ -52,10 +52,11 @@ router.post("/:eventId/images", requireAuth, async (req, res, next) => {
     const { url, preview } = req.body;
 
     foundEvent = foundEvent.toJSON();
+    // console.log(foundEvent);
     const isOrganizer = foundEvent.Group.organizerId === user.id;
     let isAttending = false;
     let isCoHost = false;
-    if (foundEvent.User && foundEvent.User.length) isAttending = true;
+    if (foundEvent.Users && foundEvent.Users.length) isAttending = true;
     if (foundEvent.Group.Member && foundEvent.Group.Member.length)
         isCoHost = true;
 
