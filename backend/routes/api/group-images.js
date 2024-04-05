@@ -21,27 +21,27 @@ router.delete("/:imageId", requireAuth, async (req, res, next) => {
                         status: "co-host",
                         userId: user.id,
                     },
+                    required: false,
                     attributes: ["userId", "groupId", "status"],
                 },
             },
         },
     });
 
-    foundImage = foundImage.toJSON();
-
     if (!foundImage)
         return res
             .status(404)
             .json({ message: "Group Image couldn't be found" });
 
-    const isCoHost = foundImage.Group.Member.length !== 0;
-    const isOrganizer = foundImage.Group.organizerId === user.id;
+    const jsonImage = foundImage.toJSON();
+
+    const isOrganizer = jsonImage.Group.organizerId === user.id;
+    const isCoHost = jsonImage.Group.Member.length !== 0;
 
     if (isCoHost || isOrganizer) {
         await foundImage.destroy();
         res.json({ message: "Successfully deleted" });
-    }
-    else next(new Error("Forbidden"));
+    } else next(new Error("Forbidden"));
 });
 
 module.exports = router;

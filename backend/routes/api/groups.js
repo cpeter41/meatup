@@ -81,7 +81,7 @@ router.get("/:groupId", async (req, res, next) => {
 
     foundGroup.dataValues.numMembers = await foundGroup.countMember();
     foundGroup = foundGroup.toJSON();
-    console.log(foundGroup);
+    // console.log(foundGroup);
 
     if (foundGroup.Venue && foundGroup.Venue.length) {
         for (let venue of foundGroup.Venue) {
@@ -135,24 +135,25 @@ router.post("/:groupId/membership", requireAuth, async (req, res, next) => {
     let { groupId } = req.params;
     groupId = parseInt(groupId);
 
-    const foundGroup = await Group.findByPk(groupId, {
+    let foundGroup = await Group.findByPk(groupId, {
         include: [
             {
                 model: User,
                 as: "Member",
-                through: {
-                    where: { groupId: groupId },
-                    attributes: ["id", "status"],
-                },
             },
         ],
     });
+
     if (!foundGroup)
         return res.status(404).json({ message: "Group couldn't be found" });
 
-    const existingUser = foundGroup.Member.find(
-        (member) => member.id === user.id
-    );
+    foundGroup = foundGroup.toJSON();
+
+    let existingUser;
+    if (foundGroup.Member.length)
+        existingUser = foundGroup.Member.find(
+            (member) => member.id === user.id
+        );
     if (existingUser) {
         if (existingUser.Membership.status === "pending") {
             return res
@@ -314,7 +315,10 @@ router.get("/:groupId/venues", requireAuth, async (req, res, next) => {
             {
                 model: User,
                 as: "Member",
-                through: { attributes: ["status"] },
+                through: {
+                    where: { userId: user.id, status: "co-host" },
+                    required: false,
+                },
             },
         ],
     });
@@ -322,16 +326,20 @@ router.get("/:groupId/venues", requireAuth, async (req, res, next) => {
         res.status(404).json({ message: "Group couldn't be found" });
 
     foundGroup = foundGroup.toJSON();
-    console.log(foundGroup);
+    const isOrganizer = foundGroup.organizerId === user.id;
+    let isCoHost = false;
+    if (foundGroup.Member && foundGroup.Member.length) isCoHost = true;
+
+    if (!isOrganizer && !isCoHost) return next(new Error("Forbidden"));
 
     const venues = await Venue.findAll({
         include: [
             {
                 model: Group,
-                attributes: [],
+                where: { id: groupId },
+                // attributes: [],
             },
         ],
-        where: { "$Group.id$": groupId },
     });
 
     for (let venue of venues) {
@@ -350,9 +358,10 @@ router.post("/:groupId/venues", requireAuth, async (req, res, next) => {
         include: {
             model: User,
             as: "Member",
-            through: { where: { groupId } },
+            through: { where: { userId: user.id, status: "co-host" } },
         },
     });
+
     if (!foundGroup)
         return res.status(404).json({ message: "Group couldn't be found" });
 
@@ -362,7 +371,9 @@ router.post("/:groupId/venues", requireAuth, async (req, res, next) => {
     foundGroup = foundGroup.toJSON();
 
     const isOrganizer = foundGroup.organizerId === user.id;
-    const isCoHost = foundGroup.Member[0].Membership.status === "co-host";
+    let isCoHost = false;
+    if (foundGroup.Member && foundGroup.Member.length)
+        isCoHost = foundGroup.Member[0].Membership.status === "co-host";
     if (!isOrganizer && !isCoHost) next(new Error("Forbidden"));
 
     const newVenue = await Venue.create({
@@ -438,8 +449,10 @@ router.post("/:groupId/events", requireAuth, async (req, res, next) => {
             model: User,
             as: "Member",
             where: { id: user.id },
+            required: false,
         },
     });
+
     if (!foundGroup)
         return res.status(404).json({ message: "Group couldn't be found" });
 

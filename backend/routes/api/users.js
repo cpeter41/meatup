@@ -50,19 +50,34 @@ router.post("/", validateSignup, async (req, res, next) => {
 
     const foundUser = await User.findOne({
         where: { [Op.or]: [{ email }, { username }] },
+        attributes: ["firstName", "lastName", "email", "username"],
     });
-    console.log("FOUND_USER:", foundUser);
+    // console.log("FOUND_USER:", foundUser);
 
     if (foundUser && foundUser.email === email) {
-        const err = new Error("User already exists");
-        err.title = "User already exists";
-        err.errors = { email: "User with that email already exists" };
-        return next(err);
+        return res.status(500).json({
+            message: "User already exists",
+            errors: {
+                email: "User with that email already exists",
+            },
+        });
+        // const err = new Error("User already exists");
+        // err.title = "User already exists";
+        // err.status = err.errors = {
+        //     email: "User with that email already exists",
+        // };
+        // return next(err);
     } else if (foundUser && foundUser.username === username) {
-        const err = new Error("User already exists");
-        err.title = "User already exists";
-        err.errors = { email: "User with that username already exists" };
-        return next(err);
+        return res.status(500).json({
+            message: "User already exists",
+            errors: {
+                email: "User with that username already exists",
+            },
+        });
+        // const err = new Error("User already exists");
+        // err.title = "User already exists";
+        // err.errors = { email: "User with that username already exists" };
+        // return next(err);
     }
 
     const user = await User.create({

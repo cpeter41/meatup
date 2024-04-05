@@ -29,6 +29,7 @@ router.delete("/:imageId", requireAuth, async (req, res, next) => {
                             status: "co-host",
                             userId: user.id,
                         },
+                        required: false,
                         attributes: ["userId", "groupId", "status"],
                     },
                 },
@@ -36,21 +37,20 @@ router.delete("/:imageId", requireAuth, async (req, res, next) => {
         },
     });
 
-    foundImage = foundImage.toJSON();
-
     if (!foundImage)
         return res
             .status(404)
             .json({ message: "Event Image couldn't be found" });
-    
-    const isCoHost = foundImage.Event.Group.Member.length !== 0;
-    const isOrganizer = foundImage.Event.Group.organizerId === user.id;
+
+    const jsonImage = foundImage.toJSON();
+
+    const isOrganizer = jsonImage.Event.Group.organizerId === user.id;
+    const isCoHost = jsonImage.Event.Group.Member.length !== 0;
 
     if (isCoHost || isOrganizer) {
         await foundImage.destroy();
         return res.json({ message: "Successfully deleted" });
-    }
-    else next(new Error("Forbidden"));
+    } else next(new Error("Forbidden"));
 });
 
 module.exports = router;

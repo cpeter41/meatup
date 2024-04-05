@@ -15,13 +15,16 @@ router.put("/:venueId", requireAuth, async (req, res, next) => {
 
     const foundVenue = await Venue.findByPk(venueId, {
         include: {
-            model: Event,
+            model: Group,
             include: {
-                model: Group,
-                include: {
-                    model: User,
-                    as: "Member",
-                    where: { id: user.id },
+                model: User,
+                as: "Member",
+                through: {
+                    where: {
+                        userId: user.id,
+                        status: "co-host",
+                    },
+                    required: false,
                 },
             },
         },
@@ -30,13 +33,10 @@ router.put("/:venueId", requireAuth, async (req, res, next) => {
     if (!foundVenue)
         return res.status(404).json({ message: "Venue couldn't be found" });
 
-    const isOrganizer = foundVenue.toJSON().Events[0].Group.organizerId;
-    let isCoHost = false;
+    const jsonVenue = foundVenue.toJSON();
 
-    if (foundVenue.toJSON().Events[0].Group.Member.length > 0)
-        isCoHost =
-            foundVenue.toJSON().Events[0].Group.Member[0].Membership.status ===
-            "co-host";
+    const isOrganizer = jsonVenue.Group.organizerId === user.id;
+    const isCoHost = jsonVenue.Group.Member && jsonVenue.Group.Member.length;
 
     // if current user is a member but isn't the group organizer or co-host
     if (!isOrganizer && !isCoHost) return next(new Error("Forbidden"));

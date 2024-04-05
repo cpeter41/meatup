@@ -19,7 +19,20 @@ router.post("/:eventId/images", requireAuth, async (req, res, next) => {
 
     let foundEvent = await Event.findByPk(eventId, {
         include: [
-            { model: Group },
+            {
+                model: Group,
+                include: {
+                    model: User,
+                    as: "Member",
+                    through: {
+                        where: {
+                            userId: user.id,
+                            status: "co-host",
+                        },
+                        required: false,
+                    },
+                },
+            },
             {
                 model: User,
                 through: {
@@ -27,10 +40,12 @@ router.post("/:eventId/images", requireAuth, async (req, res, next) => {
                         userId: user.id,
                         status: "attending",
                     },
+                    // required: false,
                 },
             },
         ],
     });
+
     if (!foundEvent)
         return res.status(404).json({ message: "Event couldn't be found" });
 
@@ -38,9 +53,14 @@ router.post("/:eventId/images", requireAuth, async (req, res, next) => {
 
     foundEvent = foundEvent.toJSON();
     const isOrganizer = foundEvent.Group.organizerId === user.id;
-    const isAttending = foundEvent.Users.length > 0;
+    let isAttending = false;
+    let isCoHost = false;
+    if (foundEvent.User && foundEvent.User.length) isAttending = true;
+    if (foundEvent.Group.Member && foundEvent.Group.Member.length)
+        isCoHost = true;
 
-    if (!isOrganizer && !isAttending) return next(new Error("Forbidden"));
+    if (!isOrganizer && !isAttending && !isCoHost)
+        return next(new Error("Forbidden"));
 
     // no validation according to API docs
 
@@ -67,19 +87,24 @@ router.put("/:eventId", requireAuth, async (req, res, next) => {
             include: {
                 model: User,
                 as: "Member",
-                where: { id: user.id },
+                through: {
+                    where: {
+                        userId: user.id,
+                        status: "co-host",
+                    },
+                    required: false,
+                },
             },
         },
     });
+
     if (!foundEvent)
         return res.status(404).json({ message: "Event couldn't be found" });
 
-    const isOrganizer = foundEvent.toJSON().Group.organizerId === user.id;
-    let isCoHost = false;
-    if (foundEvent.toJSON().Group.Member.length > 0) {
-        isCoHost =
-            foundEvent.toJSON().Group.Member[0].Membership.status === "co-host";
-    }
+    const jsonEvent = foundEvent.toJSON();
+
+    const isOrganizer = jsonEvent.Group.organizerId === user.id;
+    const isCoHost = jsonEvent.Group.Member && jsonEvent.Group.Member.length;
 
     if (!isOrganizer && !isCoHost) return next(new Error("Forbidden"));
 
@@ -135,18 +160,24 @@ router.delete("/:eventId", requireAuth, async (req, res, next) => {
             include: {
                 model: User,
                 as: "Member",
-                where: { id: user.id },
+                through: {
+                    where: {
+                        userId: user.id,
+                        status: "co-host",
+                    },
+                    required: false,
+                },
             },
         },
     });
+
     if (!foundEvent)
         return res.status(404).json({ message: "Event couldn't be found" });
 
-    const isOrganizer = foundEvent.toJSON().Group.organizerId === user.id;
-    let isCoHost = false;
-    if (foundEvent.toJSON().Group.Member.length > 0)
-        isCoHost =
-            foundEvent.toJSON().Group.Member[0].Membership.status === "co-host";
+    const jsonEvent = foundEvent.toJSON();
+
+    const isOrganizer = jsonEvent.Group.organizerId === user.id;
+    const isCoHost = jsonEvent.Group.Member && jsonEvent.Group.Member.length;
 
     if (!isOrganizer && !isCoHost) return next(new Error("Forbidden"));
 
@@ -159,10 +190,11 @@ router.get("/:eventId/attendees", async (req, res, next) => {
     const { eventId } = req.params;
     const { user } = req;
 
-    const options = {
+    let foundEvent = await Event.findByPk(eventId, {
         include: [
             {
                 model: User,
+                // as: "Attendee"
                 through: {
                     where: { eventId },
                     attributes: ["status"],
@@ -172,19 +204,19 @@ router.get("/:eventId/attendees", async (req, res, next) => {
             {
                 model: Group,
                 attributes: ["organizerId"],
-                include: [
-                    {
-                        model: User,
-                        as: "Member",
-                        through: { attributes: ["status"] },
+                include: {
+                    model: User,
+                    as: "Member",
+                    through: {
+                        attributes: ["status"],
+                        required: false,
                     },
-                ],
+                },
             },
         ],
         attributes: [],
-    };
+    });
 
-    let foundEvent = await Event.findByPk(eventId, options);
     if (!foundEvent)
         return res.status(404).json({ message: "Event couldn't be found" });
 
@@ -227,7 +259,11 @@ router.post("/:eventId/attendance", requireAuth, async (req, res, next) => {
                     model: User,
                     as: "Member",
                     through: {
-                        where: { userId: user.id },
+                        where: {
+                            userId: user.id,
+                            status: { [Op.ne]: "pending" },
+                        },
+                        required: false,
                     },
                 },
             },
@@ -238,7 +274,12 @@ router.post("/:eventId/attendance", requireAuth, async (req, res, next) => {
 
     foundEvent = foundEvent.toJSON();
 
-    if (foundEvent.Group.Member.length > 0) return next(new Error("Forbidden"));
+    if (
+        foundEvent.Group &&
+        foundEvent.Group.Member &&
+        !foundEvent.Group.Member.length
+    )
+        return next(new Error("Forbidden"));
 
     const existingUser = foundEvent.Users.find(
         (attendee) => attendee.id === user.id
@@ -273,7 +314,22 @@ router.put("/:eventId/attendance", requireAuth, async (req, res, next) => {
     const { userId, status } = req.body;
     const { user } = req;
 
-    const foundEvent = await Event.findByPk(eventId);
+    let foundEvent = await Event.findByPk(eventId, {
+        include: [
+            {
+                model: Group,
+                attributes: ["organizerId"],
+                include: {
+                    model: User,
+                    as: "Member",
+                    through: {
+                        where: { userId: user.id, status: "co-host" },
+                        required: false,
+                    },
+                },
+            },
+        ],
+    });
     if (!foundEvent)
         return res.status(404).json({ message: "Event couldn't be found" });
 
@@ -286,12 +342,9 @@ router.put("/:eventId/attendance", requireAuth, async (req, res, next) => {
             },
             {
                 model: Group,
-                as: "Member",
-                attributes: ["organizerId"],
-                include: {
-                    model: Event,
-                    where: { id: eventId },
-                },
+                as: "Organizer",
+                where: { organizerId: user.id },
+                required: false,
             },
         ],
     });
@@ -310,11 +363,21 @@ router.put("/:eventId/attendance", requireAuth, async (req, res, next) => {
             },
         });
 
-    foundUser = foundUser.toJSON();
+    foundEvent = foundEvent.toJSON();
+    // console.log(foundEvent);
 
-    const isCoHost = foundUser.Member[0].Membership.status === "co-host";
-    const isOrganizer = foundUser.Member[0].organizerId === user.id;
-    if (!isCoHost && !isOrganizer) return next(new Error("Forbidden"));
+    let isOrganizer = false;
+    if (foundEvent.Group)
+        isOrganizer = foundEvent.Group.organizerId === user.id;
+
+    let isCoHost = false;
+    if (foundEvent.Group.Member && foundEvent.Group.Member.length)
+        isCoHost = true;
+
+    if (!isCoHost && !isOrganizer) {
+        // return res.json(foundEvent);
+        return next(new Error("Forbidden"));
+    }
 
     const foundAttendee = await Attendance.findOne({
         where: { userId, eventId },
@@ -329,51 +392,6 @@ router.put("/:eventId/attendance", requireAuth, async (req, res, next) => {
         userId: foundAttendee.userId,
         status: foundAttendee.status,
     });
-
-    // const foundEvent = await Group.findByPk(eventId);
-    // if (!foundEvent)
-    //     return res.status(404).json({ message: "Event couldn't be found" });
-
-    // let foundUser = await User.findByPk(userId, {
-    //     include: [
-    //         {
-    //             model: Group,
-    //             as: "Member",
-    //             through: {
-    //                 where: { userId },
-    //                 attributes: ["status"],
-    //             },
-    //         },
-    //     ],
-    // });
-    // if (!foundUser)
-    //     return res.status(404).json({ message: "User couldn't be found" });
-
-    // const foundAttendee = await Attendance.findOne({
-    //     where: {
-    //         userId,
-    //         eventId,
-    //     },
-    //     attributes: ["id", "userId", "eventId", "status"],
-    // });
-
-    // if (!foundAttendee)
-    //     return res.status(404).json({
-    //         message: "Attendance between the user and the event does not exist",
-    //     });
-
-    // foundUser = foundUser.toJSON();
-
-    // foundAttendee.status = status;
-
-    // await foundAttendee.save();
-
-    // res.json({
-    //     id: foundAttendee.id,
-    //     eventId: foundAttendee.eventId,
-    //     userId: foundAttendee.userId,
-    //     status: foundAttendee.status,
-    // });
 });
 
 router.delete(
@@ -490,11 +508,13 @@ router.get("/", async (req, res, next) => {
     };
 
     if (!page) page = 1;
-    else if (isNaN(page) || parseInt(page) < 1 || parseInt(page) > 10)
-        err.errors.page = "Page must be greater than or equal to 1";
-
     if (!size) size = 20;
-    else if (isNaN(size) || parseInt(size) < 1 || parseInt(size) > 20)
+    page = parseInt(page);
+    size = parseInt(size);
+
+    if (isNaN(page) || page < 1 || page > 10)
+        err.errors.page = "Page must be greater than or equal to 1";
+    if (isNaN(size) || size < 1 || size > 20)
         err.errors.size = "Size must be greater than or equal to 1";
 
     options.offset = parseInt(size) * (parseInt(page) - 1);
@@ -525,10 +545,10 @@ router.get("/", async (req, res, next) => {
 
     if (Object.keys(err.errors).length) return res.status(400).json(err);
 
-    console.log(
-        "----------------------------------OPTIONS----------------------------------",
-        options
-    );
+    // console.log(
+    //     "----------------------------------OPTIONS----------------------------------",
+    //     options
+    // );
     const events = await Event.findAll(options);
 
     // consider using aggregate fn instead of for loop

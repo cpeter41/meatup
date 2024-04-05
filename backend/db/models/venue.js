@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
 
             Venue.belongsTo(models.Group, {
                 foreignKey: "groupId",
-                onDelete: "SET NULL",
+                // onDelete: "CASCADE",
             });
         }
     }
@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: { model: "Groups", key: "id" },
-                onDelete: "SET NULL",
+                // onDelete: "CASCADE",
             },
             address: {
                 type: DataTypes.STRING,
