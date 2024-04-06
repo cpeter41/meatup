@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: { model: "Groups", key: "id" },
-                onDelete: "CASCADE",
+                // onDelete: "CASCADE",
             },
             url: {
                 type: DataTypes.STRING,

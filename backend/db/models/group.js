@@ -9,7 +9,11 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
-            Group.hasMany(models.Event, { foreignKey: "groupId" });
+            Group.hasMany(models.Event, { 
+                foreignKey: "groupId",
+                onDelete: "CASCADE",
+                hooks: true,
+            });
 
             Group.belongsTo(models.User, {
                 foreignKey: "organizerId",
@@ -23,9 +27,17 @@ module.exports = (sequelize, DataTypes) => {
                 as: "Member",
             });
 
-            Group.hasMany(models.GroupImage, { foreignKey: "groupId" });
+            Group.hasMany(models.GroupImage, { 
+                foreignKey: "groupId",
+                onDelete: "CASCADE",
+                hooks: true,
+            });
 
-            Group.hasMany(models.Venue, { foreignKey: "groupId" });
+            Group.hasMany(models.Venue, { 
+                foreignKey: "groupId",
+                onDelete: "CASCADE",
+                hooks: true,
+            });
         }
     }
     Group.init(
