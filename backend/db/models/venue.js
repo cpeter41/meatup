@@ -15,10 +15,7 @@ module.exports = (sequelize, DataTypes) => {
                 hooks: true,
             });
 
-            Venue.belongsTo(models.Group, {
-                foreignKey: "groupId",
-                // onDelete: "CASCADE",
-            });
+            Venue.belongsTo(models.Group, { foreignKey: "groupId" });
         }
     }
     Venue.init(
@@ -27,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: { model: "Groups", key: "id" },
-                // onDelete: "CASCADE",
+                onDelete: "CASCADE",
             },
             address: {
                 type: DataTypes.STRING,
