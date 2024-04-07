@@ -9,8 +9,6 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
-            // Membership.belongsTo(models.User, { foreignKey: 'userId' });
-            // Membership.belongsTo(models.Group, { foreignKey: 'groupId' });
         }
     }
     Membership.init(
@@ -19,13 +17,13 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: { model: "Users", key: "id" },
-                // onDelete: "CASCADE"
+                onDelete: "CASCADE"
             },
             groupId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: { model: "Groups", key: "id" },
-                // onDelete: "CASCADE"
+                onDelete: "CASCADE"
             },
             status: {
                 type: DataTypes.STRING,

@@ -223,15 +223,23 @@ router.get("/:eventId/attendees", async (req, res, next) => {
 
     foundEvent = foundEvent.toJSON();
 
-    const orgId = foundEvent.Group.organizerId;
+    const isOrganizer = foundEvent.Group.organizerId === user.id;
     let isCoHost = false;
-    if (foundEvent.Group.Member[0]) {
-        isCoHost = foundEvent.Group.Member[0].Membership.status === "co-host";
+    // if (foundEvent.Group.Member[0]) {
+    //     isCoHost = foundEvent.Group.Member[0].Membership.status === "co-host";
+    // }
+    if (foundEvent.Group.Member && foundEvent.Group.Member.length) {
+        if (
+            foundEvent.Group.Member.find(
+                (member) => member.Membership.status === "co-host"
+            )
+        )
+            isCoHost = true;
     }
     delete foundEvent.Group;
 
     // if user isn't organizer...
-    if (orgId !== user.id && !isCoHost) {
+    if (!isOrganizer && !isCoHost) {
         return res.json({
             Attendees: foundEvent.Users.filter(
                 (user) => user.Attendance.status !== "pending"

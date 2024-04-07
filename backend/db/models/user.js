@@ -13,7 +13,6 @@ module.exports = (sequelize, DataTypes) => {
                 through: "Attendance",
                 foreignKey: "userId",
                 otherKey: "eventId",
-                // as: "Attendee",
             });
 
             User.hasMany(models.Group, {
