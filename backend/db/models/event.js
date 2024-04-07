@@ -19,14 +19,13 @@ module.exports = (sequelize, DataTypes) => {
                 through: "Attendance",
                 foreignKey: "eventId",
                 otherKey: "userId",
-                // as: "Attendee",
             });
 
             Event.belongsTo(models.Venue, { foreignKey: "venueId" });
 
             Event.belongsTo(models.Group, {
                 foreignKey: "groupId",
-                // onDelete: "CASCADE",
+                onDelete: "CASCADE",
             });
         }
     }
@@ -41,6 +40,7 @@ module.exports = (sequelize, DataTypes) => {
             venueId: {
                 type: DataTypes.INTEGER,
                 references: { model: "Venues", key: "id" },
+                // onDelete: "CASCADE",
             },
             name: {
                 type: DataTypes.STRING,
