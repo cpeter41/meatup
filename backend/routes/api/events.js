@@ -12,6 +12,18 @@ const { Sequelize, EmptyResultError, Op } = require("sequelize");
 const { requireAuth } = require("../../utils/auth.js");
 const router = express.Router();
 
+const formatDate = (date) => {
+    if (!date) return date;
+
+    let dateTime;
+    if (date instanceof Date) dateTime = date.toISOString();
+    else dateTime = date;
+
+    dateTime = dateTime.split("T");
+    dateTime[1] = dateTime[1].slice(0, 8);
+    return dateTime.join(" ");
+};
+
 router.post("/:eventId/images", requireAuth, async (req, res, next) => {
     let { eventId } = req.params;
     const { user } = req;
@@ -146,8 +158,8 @@ router.put("/:eventId", requireAuth, async (req, res, next) => {
         capacity: foundEvent.capacity,
         price: foundEvent.price,
         description: foundEvent.description,
-        startDate: foundEvent.startDate,
-        endDate: foundEvent.endDate,
+        startDate: formatDate(foundEvent.startDate),
+        endDate: formatDate(foundEvent.endDate),
     });
 });
 
@@ -231,7 +243,9 @@ router.get("/:eventId/attendees", async (req, res, next) => {
     if (foundEvent.Group.Member && foundEvent.Group.Member.length) {
         if (
             foundEvent.Group.Member.find(
-                (member) => member.Membership.status === "co-host"
+                (member) =>
+                    member.Membership.status === "co-host" &&
+                    member.id === user.id
             )
         )
             isCoHost = true;
@@ -486,6 +500,11 @@ router.get("/:eventId", async (req, res, next) => {
         foundEvent.dataValues.Venue.lng
     );
 
+    foundEvent.dataValues.startDate = formatDate(
+        foundEvent.dataValues.startDate
+    );
+    foundEvent.dataValues.endDate = formatDate(foundEvent.dataValues.endDate);
+
     res.json(foundEvent);
 });
 
@@ -531,13 +550,13 @@ router.get("/", async (req, res, next) => {
 
     if (name) {
         if (typeof name === "string" && isNaN(parseInt(name)))
-            options.where.name = name;
+            options.where.name = { [Op.like]: `%${name}%` };
         else err.errors.name = "Name must be a string";
     }
 
     if (type) {
         if (type === "Online" || type === "In person")
-            options.where.type = type;
+            options.where.type = { [Op.like]: `%${type}%` };
         else err.errors.type = "Type must be 'Online' or 'In person'";
     }
 
@@ -554,10 +573,6 @@ router.get("/", async (req, res, next) => {
 
     if (Object.keys(err.errors).length) return res.status(400).json(err);
 
-    // console.log(
-    //     "----------------------------------OPTIONS----------------------------------",
-    //     options
-    // );
     const events = await Event.findAll(options);
 
     // consider using aggregate fn instead of for loop
@@ -571,6 +586,9 @@ router.get("/", async (req, res, next) => {
         if (previewImage)
             event.dataValues.previewImage = previewImage.dataValues.url;
         else event.dataValues.previewImage = null;
+
+        event.dataValues.startDate = formatDate(event.dataValues.startDate);
+        event.dataValues.endDate = formatDate(event.dataValues.endDate);
     }
 
     res.json({

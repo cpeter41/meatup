@@ -15,6 +15,7 @@ const {
 } = require("../../db/models");
 const { requireAuth } = require("../../utils/auth.js");
 const { Op } = require("sequelize");
+const { format } = require("sequelize/lib/utils");
 const router = express.Router();
 
 // CONSIDER SWITCHING HELPER VALIDATOR TO EXPRESS-VALIDATOR CHAIN
@@ -28,6 +29,20 @@ const setPreviewImage = (groups) => {
         else group.dataValues.previewImage = null;
         delete group.dataValues.GroupImages;
     });
+};
+
+const formatDate = (date) => {
+    if (!date) return date;
+
+    let dateTime;
+    if (date instanceof Date) dateTime = date.toISOString();
+    else dateTime = date;
+    // else return date
+
+    dateTime = dateTime.split("T");
+    console.log("DATETIME", dateTime);
+    dateTime[1] = dateTime[1].slice(0, 8);
+    return dateTime.join(" ");
 };
 
 // GET api/groups/current
@@ -50,9 +65,12 @@ router.get("/current", requireAuth, async (req, res, next) => {
         },
     });
 
+    // (FIX, BUG) CHANGE TO AN ACTUAL AGGREGATE FUNCTION SOMETIME
     for (let group of groups) {
         const numMembers = await group.countMember();
         group.dataValues.numMembers = numMembers;
+        group.dataValues.createdAt = formatDate(group.dataValues.createdAt);
+        group.dataValues.updatedAt = formatDate(group.dataValues.updatedAt);
     }
     setPreviewImage(groups);
 
@@ -80,8 +98,10 @@ router.get("/:groupId", async (req, res, next) => {
         return res.status(404).json({ message: "Group couldn't be found" });
 
     foundGroup.dataValues.numMembers = await foundGroup.countMember();
+    console.log("GROUP: --------------------", foundGroup);
+    foundGroup.dataValues.createdAt = formatDate(foundGroup.dataValues.createdAt);
+    foundGroup.dataValues.updatedAt = formatDate(foundGroup.dataValues.updatedAt);
     foundGroup = foundGroup.toJSON();
-    // console.log(foundGroup);
 
     if (foundGroup.Venue && foundGroup.Venue.length) {
         for (let venue of foundGroup.Venue) {
@@ -345,6 +365,7 @@ router.get("/:groupId/venues", requireAuth, async (req, res, next) => {
     for (let venue of venues) {
         venue.lat = parseFloat(venue.lat);
         venue.lng = parseFloat(venue.lng);
+        delete venue.dataValues.Group;
     }
 
     res.json({ Venues: venues });
@@ -434,6 +455,9 @@ router.get("/:groupId/events", async (req, res, next) => {
         });
         if (previewImage) event.dataValues.previewImage = previewImage.url;
         else event.dataValues.previewImage = null;
+
+        event.dataValues.startDate = formatDate(event.dataValues.startDate);
+        event.dataValues.endDate = formatDate(event.dataValues.endDate);
     }
 
     res.json({ Events: events });
@@ -501,8 +525,8 @@ router.post("/:groupId/events", requireAuth, async (req, res, next) => {
         capacity: newEvent.capacity,
         price: parseFloat(newEvent.price),
         description: newEvent.description,
-        startDate: newEvent.startDate,
-        endDate: newEvent.endDate,
+        startDate: formatDate(newEvent.startDate),
+        endDate: formatDate(newEvent.endDate),
     });
 });
 
@@ -526,6 +550,13 @@ router.put("/:groupId", requireAuth, async (req, res, next) => {
     foundGroup.state = state;
 
     await foundGroup.save();
+
+    foundGroup.dataValues.createdAt = formatDate(
+        foundGroup.dataValues.createdAt
+    );
+    foundGroup.dataValues.updatedAt = formatDate(
+        foundGroup.dataValues.updatedAt
+    );
 
     res.json(foundGroup);
 });
@@ -561,6 +592,8 @@ router.get("/", async (req, res, next) => {
     groups.forEach((group) => {
         group.dataValues.numMembers = group.Member.length;
         delete group.dataValues.Member;
+        group.dataValues.createdAt = formatDate(group.dataValues.createdAt);
+        group.dataValues.updatedAt = formatDate(group.dataValues.updatedAt);
     });
 
     setPreviewImage(groups);
@@ -583,6 +616,9 @@ router.post("/", requireAuth, async (req, res, next) => {
         city,
         state,
     });
+
+    newGroup.dataValues.createdAt = formatDate(newGroup.dataValues.createdAt);
+    newGroup.dataValues.updatedAt = formatDate(newGroup.dataValues.updatedAt);
 
     res.status(201).json(newGroup);
 });
