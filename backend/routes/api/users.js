@@ -11,16 +11,10 @@ const { Op } = require("sequelize");
 const router = express.Router();
 
 const validateSignup = [
-    check("firstName")
-        .exists({ checkFalsy: true })
-        .withMessage("First Name is required."),
-    check("lastName")
-        .exists({ checkFalsy: true })
-        .withMessage("Last Name is required."),
     check("email")
         .exists({ checkFalsy: true })
         .isEmail()
-        .withMessage("Please provide a valid email."),
+        .withMessage("Email or username is required"),
     check("username")
         .exists({ checkFalsy: true })
         .isLength({ min: 4 })
@@ -29,22 +23,21 @@ const validateSignup = [
         .not()
         .isEmail()
         .withMessage("Username cannot be an email."),
+    check("firstName")
+        .exists({ checkFalsy: true })
+        .withMessage("First Name is required."),
+    check("lastName")
+        .exists({ checkFalsy: true })
+        .withMessage("Last Name is required."),
     check("password")
         .exists({ checkFalsy: true })
         .isLength({ min: 6 })
-        .withMessage("Password must be 6 characters or more."),
+        .withMessage("Password is required"),
     handleValidationErrors,
 ];
 
 router.post("/", validateSignup, async (req, res, next) => {
-    // const err = { message: "Bad Request", errors: {} };
     const { firstName, lastName, email, username, password } = req.body;
-    // if (!firstName) err.errors.firstName = "First Name is required";
-    // if (!lastName) err.errors.lastName = "Last Name is required";
-    // if (!username) err.errors.username = "Last Name is required";
-    // if (!email) err.errors.email = "Invalid email";
-
-    // if (Object.keys(err.errors).length) return res.status(400).json(err);
 
     const hashedPassword = bcrypt.hashSync(password);
 
@@ -52,7 +45,6 @@ router.post("/", validateSignup, async (req, res, next) => {
         where: { [Op.or]: [{ email }, { username }] },
         attributes: ["firstName", "lastName", "email", "username"],
     });
-    // console.log("FOUND_USER:", foundUser);
 
     if (foundUser && foundUser.email === email) {
         return res.status(500).json({
@@ -61,23 +53,13 @@ router.post("/", validateSignup, async (req, res, next) => {
                 email: "User with that email already exists",
             },
         });
-        // const err = new Error("User already exists");
-        // err.title = "User already exists";
-        // err.status = err.errors = {
-        //     email: "User with that email already exists",
-        // };
-        // return next(err);
     } else if (foundUser && foundUser.username === username) {
         return res.status(500).json({
             message: "User already exists",
             errors: {
-                email: "User with that username already exists",
+                username: "User with that username already exists",
             },
         });
-        // const err = new Error("User already exists");
-        // err.title = "User already exists";
-        // err.errors = { email: "User with that username already exists" };
-        // return next(err);
     }
 
     const user = await User.create({
