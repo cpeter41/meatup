@@ -549,6 +549,7 @@ router.get("/", async (req, res, next) => {
     options.limit = parseInt(size);
 
     if (name) {
+        // NOTE: prevents event from being named a number
         if (typeof name === "string" && isNaN(parseInt(name)))
             options.where.name = { [Op.like]: `%${name}%` };
         else err.errors.name = "Name must be a string";
