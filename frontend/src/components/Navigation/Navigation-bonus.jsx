@@ -28,7 +28,7 @@ function Navigation({ isLoaded }) {
             </NavLink>
             {isLoaded && sessionUser ? (
                 <div className="nav-user">
-                    <NavLink to="/groups/new">Start a new group</NavLink>
+                    <NavLink className="nav-link" to="/groups/new">Start a new group</NavLink>
                     <ProfileButton user={sessionUser} />
                 </div>
             ) : (

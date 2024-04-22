@@ -30,6 +30,10 @@
     text-align: center;
 }
 
+.nav-link {
+    color: teal;
+}
+
 .disabled {
     color: lightgray;
 }

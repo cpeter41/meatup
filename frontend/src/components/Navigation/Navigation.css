@@ -16,3 +16,7 @@
 .nav-user > * {
     margin: 0px 10px;
 }
+
+.nav-link {
+    color: teal;
+}
