@@ -1,7 +1,18 @@
 .profile-dropdown {
-  position: absolute;
+    position: absolute;
+    list-style-type: none;
 }
 
 .hidden {
-  display: none;
+    display: none;
+}
+
+#nav-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.nav-user > * {
+    margin-inline: 10px;
 }
