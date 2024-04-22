@@ -2,7 +2,10 @@ function IntroCard() {
     return (
         <div id="intro-card">
             <div id="intro-title">
-                <h1>The meat platform- Where food inspires friendships</h1>
+                <h1>
+                    The meat platform- <br />
+                    Where food inspires friendships
+                </h1>
                 <p>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                     Aenean at ipsum eu nisi faucibus iaculis vel vitae elit.

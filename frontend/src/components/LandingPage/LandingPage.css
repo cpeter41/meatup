@@ -21,10 +21,25 @@
     justify-content: center;
 }
 
-.home-nav-button {
+.home-nav-card {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 20%;
     margin: 20px;
+    text-align: center;
+}
+
+.disabled {
+    color: lightgray;
+}
+
+#meatup-desc {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#meatup-desc > * {
+    margin: 4px;
 }
