@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Outlet, createBrowserRouter, RouterProvider } from "react-router-dom";
-// import LoginFormPage from './components/LoginFormPage';
-// import SignupFormPage from './components/SignupFormPage';
 import Navigation from "./components/Navigation/Navigation-bonus";
 import LandingPage from "./components/LandingPage/LandingPage";
+import GroupsList from "./components/GroupsList/GroupsList";
 import * as sessionActions from "./store/session";
 import { Modal } from "./context/Modal";
 
@@ -34,6 +33,10 @@ const router = createBrowserRouter([
             {
                 path: "/",
                 element: <LandingPage />,
+            },
+            {
+                path: "/groups",
+                element: <GroupsList />
             },
             {
                 path: "*",
