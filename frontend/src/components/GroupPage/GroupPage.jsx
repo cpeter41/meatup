@@ -21,6 +21,8 @@ function GroupPage() {
 
     const group = useSelector((state) => state.groups.groupDetails);
 
+    // console.log("GROUP:", group);
+
     if (group && group.GroupImages) {
         previewImage = group.GroupImages.find(
             (groupImage) => groupImage.preview
@@ -65,8 +67,12 @@ function GroupPage() {
                     <h2>What we&apos;re about</h2>
                     <p>{group && group.about}</p>
                 </div>
-                <div id="upcoming-events"></div>
-                <div id="past-events"></div>
+                <div id="upcoming-events">
+                    <h2>Upcoming Events</h2>
+                </div>
+                <div id="past-events">
+                    <h2>Past Events</h2>
+                </div>
             </section>
         </div>
     ) : (

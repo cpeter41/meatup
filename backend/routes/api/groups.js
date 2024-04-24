@@ -40,7 +40,7 @@ const formatDate = (date) => {
     // else return date
 
     dateTime = dateTime.split("T");
-    console.log("DATETIME", dateTime);
+    // console.log("DATETIME", dateTime);
     dateTime[1] = dateTime[1].slice(0, 8);
     return dateTime.join(" ");
 };
@@ -98,7 +98,6 @@ router.get("/:groupId", async (req, res, next) => {
         return res.status(404).json({ message: "Group couldn't be found" });
 
     foundGroup.dataValues.numMembers = await foundGroup.countMember();
-    console.log("GROUP: --------------------", foundGroup);
     foundGroup.dataValues.createdAt = formatDate(foundGroup.dataValues.createdAt);
     foundGroup.dataValues.updatedAt = formatDate(foundGroup.dataValues.updatedAt);
     foundGroup = foundGroup.toJSON();
