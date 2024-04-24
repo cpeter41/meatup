@@ -1,14 +1,18 @@
 import { NavLink } from "react-router-dom";
 // import { csrfFetch } from "../../store/csrf";
 import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 import { getGroups } from "../../store/group";
+import "./GroupsList.css";
 
 function GroupsList() {
     const dispatch = useDispatch();
 
-    dispatch(getGroups());
+    useEffect(() => {
+        dispatch(getGroups());
+    }, [dispatch]);
 
-    const groups = useSelector((state) => Object.keys(state.Groups));
+    const groupsObj = useSelector((state) => state.groups);
 
     return (
         <div id="groups-div">
@@ -18,7 +22,28 @@ function GroupsList() {
             </div>
             <p>Groups in meatup</p>
             <ul id="groups-list">
-                {/* groups.map each item into group cards to list (dont forget to console log!) */}
+                {groupsObj &&
+                    groupsObj.Groups &&
+                    groupsObj.Groups.map((group) => {
+                        return (
+                            <li className="group-card" key={group.id}>
+                                <NavLink to={`/groups/${group.id}`}>
+                                    <div className="placeholder-img"></div>
+                                    <div className="group-info-card">
+                                        <h3>{group.name}</h3>
+                                        <span>{group.city}</span>
+                                        <p>{group.about}</p>
+                                        <span>
+                                            # events ·{" "}
+                                            {group.private
+                                                ? "Private"
+                                                : "Public"}
+                                        </span>
+                                    </div>
+                                </NavLink>
+                            </li>
+                        );
+                    })}
             </ul>
         </div>
     );

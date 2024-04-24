@@ -4,6 +4,7 @@ import { Outlet, createBrowserRouter, RouterProvider } from "react-router-dom";
 import Navigation from "./components/Navigation/Navigation-bonus";
 import LandingPage from "./components/LandingPage/LandingPage";
 import GroupsList from "./components/GroupsList/GroupsList";
+import GroupPage from "./components/GroupPage/GroupPage";
 import * as sessionActions from "./store/session";
 import { Modal } from "./context/Modal";
 
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
             {
                 path: "/groups",
                 element: <GroupsList />
+            },
+            {
+                path: "/groups/:groupId",
+                element: <GroupPage />
             },
             {
                 path: "*",

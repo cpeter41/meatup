@@ -1,0 +1,77 @@
+import { useDispatch, useSelector } from "react-redux";
+import { NavLink, useParams } from "react-router-dom";
+import { getGroupDetails } from "../../store/group";
+import { useEffect, useState } from "react";
+import { IMG_NOT_FOUND } from "../../util/util";
+import "./GroupPage.css";
+
+function GroupPage() {
+    const dispatch = useDispatch();
+    const { groupId } = useParams();
+    const [isValidId, setIsValidId] = useState(false);
+
+    let previewImage;
+
+    useEffect(() => {
+        if (isNaN(groupId)) setIsValidId(false);
+        else setIsValidId(true);
+
+        if (isValidId) dispatch(getGroupDetails(groupId));
+    }, [dispatch, groupId, isValidId]);
+
+    const group = useSelector((state) => state.groups.groupDetails);
+
+    if (group && group.GroupImages) {
+        previewImage = group.GroupImages.find(
+            (groupImage) => groupImage.preview
+        );
+        if (!previewImage) previewImage = { url: IMG_NOT_FOUND };
+    }
+
+    return isValidId ? (
+        <div id="group-container">
+            <section id="group-preview">
+                <div id="group-image-box">
+                    <span>
+                        &lt; <NavLink to="/groups">Groups</NavLink>
+                    </span>
+                    <img src={previewImage && previewImage.url} />
+                </div>
+                <div id="group-preview-and-button">
+                    <div id="group-preview-info">
+                        <h1>{group && group.name}</h1>
+                        <span>{group && group.city}</span>
+                        <span>
+                            # events ·{" "}
+                            {group && group.private ? "Private" : "Public"}
+                        </span>
+                        <span>
+                            Organized By {group && group.Organizer.firstName}{" "}
+                            {group && group.Organizer.lastName}
+                        </span>
+                    </div>
+                    <button id="join-group-button">Join this group</button>
+                </div>
+            </section>
+            <section id="group-details">
+                <div id="organizer">
+                    <h2>Organizer</h2>
+                    <span>
+                        {group && group.Organizer.firstName}{" "}
+                        {group && group.Organizer.lastName}
+                    </span>
+                </div>
+                <div id="about">
+                    <h2>What we&apos;re about</h2>
+                    <p>{group && group.about}</p>
+                </div>
+                <div id="upcoming-events"></div>
+                <div id="past-events"></div>
+            </section>
+        </div>
+    ) : (
+        <h1>Page Not Found</h1>
+    );
+}
+
+export default GroupPage;
