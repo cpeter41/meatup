@@ -1,7 +1,6 @@
 "use strict";
 
 const { Group } = require("../models");
-const { Op } = require("sequelize");
 
 let options = { validate: true };
 if (process.env.NODE_ENV === "production") {
@@ -11,7 +10,7 @@ if (process.env.NODE_ENV === "production") {
 const groups = [
     {
         organizerId: 2,
-        name: "Goofy Goobers",
+        name: "Ribeye Fanclub",
         about: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris facilisis congue odio, id tempor nisl gravida ut. Vestibulum eget purus elit.",
         type: "Online",
         private: false,
@@ -20,16 +19,16 @@ const groups = [
     },
     {
         organizerId: 3,
-        name: "Orange County Hiking Club",
+        name: "Los Angeles Barbeque Squadron",
         about: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris facilis",
         type: "In person",
         private: false,
-        city: "Laguna Niguel",
+        city: "Los Angeles",
         state: "CA",
     },
     {
         organizerId: 1,
-        name: "Los Angeles Divorced Dads",
+        name: "Filet Fiends",
         about: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris facilisis congue odio, id tempor nisl gravida ut.",
         type: "In person",
         private: false,
@@ -38,7 +37,7 @@ const groups = [
     },
     {
         organizerId: 4,
-        name: "South Coast Tabletop Club",
+        name: "The Sausage Fest",
         about: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
         type: "Online",
         private: true,
@@ -47,7 +46,7 @@ const groups = [
     },
     {
         organizerId: 5,
-        name: "Mensa 2",
+        name: "Meat Pie Enjoyers",
         about: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
         type: "In person",
         private: false,
@@ -80,17 +79,6 @@ module.exports = {
          */
         await queryInterface.bulkDelete(
             "Groups",
-            // {
-            //     name: {
-            //         [Op.in]: [
-            //             "Goofy Goobers",
-            //             "Orange County Hiking Club",
-            //             "Los Angeles Divorced Dads",
-            //             "South Coast Tabletop Club",
-            //             "Mensa 2",
-            //         ],
-            //     },
-            // },
             null,
             options
         );

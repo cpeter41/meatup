@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useParams, useNavigate } from "react-router-dom";
 import { getGroupDetails } from "../../store/group";
 import { useEffect, useState } from "react";
 import { IMG_NOT_FOUND } from "../../util/util";
@@ -7,6 +7,7 @@ import "./GroupPage.css";
 
 function GroupPage() {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { groupId } = useParams();
     const [isValidId, setIsValidId] = useState(false);
 
@@ -20,8 +21,7 @@ function GroupPage() {
     }, [dispatch, groupId, isValidId]);
 
     const group = useSelector((state) => state.groups.groupDetails);
-
-    // console.log("GROUP:", group);
+    const userId = useSelector((state) => state.session.user.id);
 
     if (group && group.GroupImages) {
         previewImage = group.GroupImages.find(
@@ -34,9 +34,11 @@ function GroupPage() {
         <div id="group-container">
             <section id="group-preview">
                 <div id="group-image-box">
-                    <span>
-                        &lt; <NavLink to="/groups">Groups</NavLink>
-                    </span>
+                    <div>
+                        <span>
+                            &lt; <NavLink to="/groups">Groups</NavLink>
+                        </span>
+                    </div>
                     <img src={previewImage && previewImage.url} />
                 </div>
                 <div id="group-preview-and-button">
@@ -52,7 +54,21 @@ function GroupPage() {
                             {group && group.Organizer.lastName}
                         </span>
                     </div>
-                    <button id="join-group-button">Join this group</button>
+                    {group && userId === group.organizerId ? (
+                        <div>
+                            <button>Create event</button>
+                            <button
+                                onClick={() =>
+                                    navigate(`/groups/${groupId}/edit`)
+                                }
+                            >
+                                Update
+                            </button>
+                            <button>Delete</button>
+                        </div>
+                    ) : (
+                        <button id="join-group-button">Join this group</button>
+                    )}
                 </div>
             </section>
             <section id="group-details">

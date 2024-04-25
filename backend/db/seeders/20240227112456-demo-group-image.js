@@ -11,32 +11,32 @@ if (process.env.NODE_ENV === "production") {
 const groupImages = [
     {
         groupId: 1,
-        url: "https://google.com",
+        url: "https://girlscangrill.com/wp-content/uploads/2023/05/sliced-ninja-ribeye-500x500.jpg",
         preview: true,
     },
     {
         groupId: 2,
-        url: "https://google.com",
-        preview: false,
+        url: "https://assets3.thrillist.com/v1/image/3080265/750x500.jpg",
+        preview: true,
     },
     {
         groupId: 3,
-        url: "https://google.com",
+        url: "https://hips.hearstapps.com/hmg-prod/images/delish-filet-mignon-horizontal-1541189043.jpeg",
         preview: true,
     },
     {
         groupId: 4,
-        url: "https://google.com",
-        preview: false,
-    },
-    {
-        groupId: 5,
-        url: "https://google.com",
+        url: "https://www.thespruceeats.com/thmb/nEMd5amKMZn798vYigT5jO_wJLU=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/assorted-german-sausages-126552028-5812490d3df78c2c7362bd64.jpg",
         preview: true,
     },
     {
-        groupId: 1,
-        url: "https://google.com",
+        groupId: 5,
+        url: "https://www.recipetineats.com/wp-content/uploads/2021/09/Meat-Pie-Family-Size_39-new-SQ.jpg",
+        preview: true,
+    },
+    {
+        groupId: 3,
+        url: "https://cdn.apartmenttherapy.info/image/upload/f_auto,q_auto:eco,c_fill,g_auto,w_1500,ar_3:2/k%2FPhoto%2FRecipes%2F2023-12-filet-mignon%2Ffilet-mignon-514.jpg",
         preview: false,
     },
 ];

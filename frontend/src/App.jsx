@@ -38,15 +38,19 @@ const router = createBrowserRouter([
             },
             {
                 path: "/groups",
-                element: <GroupsList />
+                element: <GroupsList />,
             },
             {
                 path: "/groups/new",
-                element: <GroupForm />
+                element: <GroupForm />,
             },
             {
                 path: "/groups/:groupId",
-                element: <GroupPage />
+                element: <GroupPage />,
+            },
+            {
+                path: "/groups/:groupId/edit",
+                element: <GroupForm mode="update" />,
             },
             {
                 path: "*",

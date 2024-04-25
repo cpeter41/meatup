@@ -8,7 +8,10 @@ function HomeNavCard({ type }) {
         case "see-all-groups":
             return (
                 <div className="home-nav-card" id="see-all-groups">
-                    <img src="../../../images/handshake.png" alt="handshake" />
+                    <img
+                        src="https://news.utexas.edu/wp-content/uploads/2019/06/Mixed-Race-Hands.jpg"
+                        alt="handshake"
+                    />
                     <NavLink to="/groups" className="nav-link">
                         See all groups
                     </NavLink>
@@ -21,7 +24,7 @@ function HomeNavCard({ type }) {
             return (
                 <div className="home-nav-card" id="find-an-event">
                     <img
-                        src="../../../images/meat_stand.png"
+                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/A_meat_stand_in_La_Boqueria.jpg/640px-A_meat_stand_in_La_Boqueria.jpg"
                         alt="a meat stand"
                     />
                     <NavLink to="/events" className="nav-link">
@@ -35,7 +38,10 @@ function HomeNavCard({ type }) {
         case "create-group":
             return (
                 <div className="home-nav-card" id="create-group">
-                    <img src="../../../images/sausage.png" alt="sausage" />
+                    <img
+                        src="https://natashaskitchen.com/wp-content/uploads/2017/04/Homemade-Sausage-2-500x500.jpg"
+                        alt="sausage"
+                    />
                     {sessionUser ? (
                         <NavLink to="/groups/new" className="nav-link">
                             Start a new Group

@@ -11,6 +11,14 @@
     width: 60%;
 }
 
+#home-image {
+    width: 50%;
+}
+
+#home-image img {
+    width: 100%;
+}
+
 #intro-title {
     width: 50%;
 }
@@ -28,6 +36,12 @@
     width: 20%;
     margin: 20px;
     text-align: center;
+}
+
+.home-nav-card > img {
+    height: 180px;
+    width: 200px;
+    object-fit: cover;
 }
 
 .nav-link {

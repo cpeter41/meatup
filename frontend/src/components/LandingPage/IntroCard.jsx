@@ -15,7 +15,12 @@ function IntroCard() {
                     imperdiet feugiat.
                 </p>
             </div>
-            <img src="../../../images/home_image.png" alt="outdoor bbq" />
+            <div id="home-image">
+                <img
+                    src="https://media.cnn.com/api/v1/images/stellar/prod/230626190944-fourth-of-july-cookout-stock.jpg?c=original"
+                    alt="outdoor bbq"
+                />
+            </div>
         </div>
     );
 }

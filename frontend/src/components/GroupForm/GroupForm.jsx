@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { csrfFetch } from "../../store/csrf";
+import { useSelector } from "react-redux";
 
-function GroupForm() {
+function GroupForm({ mode }) {
     const [location, setLocation] = useState("");
     const [name, setName] = useState("");
     const [about, setAbout] = useState("");
@@ -12,14 +13,28 @@ function GroupForm() {
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
 
+    const group = useSelector((state) => state.groups.groupDetails);
+    useEffect(() => {
+        if (mode === "update") {
+            setName(group.name);
+            setLocation([group.city, group.state].join(", "));
+            setAbout(group.about);
+            setType(group.type);
+            setPrivate(group.private ? "Private" : "Public");
+            const prevImg = group.GroupImages.find((img) => img.preview);
+            if (prevImg) setImage(prevImg.url);
+        }
+    }, [mode, group]);
+
     async function onSubmit(e) {
         const error = {}; // note: NOT the same as errors controlled variable
         e.preventDefault();
-        const locationArr = location.split(",");
+        const locationArr = location.split(", ");
 
         if (location === "") error.location = "Location is required";
         else if (locationArr.length !== 2)
-            error.location = "Incorrect location format (City, STATE) e.g. Los Angeles, CA";
+            error.location =
+                "Incorrect location format (City, STATE) e.g. Los Angeles, CA";
         if (name === "") error.name = "Name is required";
         if (about.length < 30)
             error.about = "Description must be at least 30 characters long";
@@ -33,21 +48,25 @@ function GroupForm() {
         setErrors(error); // 'sync' current scoped error to controlled var
         if (!Object.keys(error).length) {
             // skip redux, send directly
-            const res = await csrfFetch("/api/groups", {
-                method: "POST",
-                body: JSON.stringify({
-                    name,
-                    about,
-                    type,
-                    private: isPrivate === "Private",
-                    city: locationArr[0],
-                    state: locationArr[1],
-                }),
-            });
-            const group = await res.json();
-            // console.log("newgroup: ", group);
+            const method = mode === "update" ? "PUT" : "POST";
 
-            navigate(`/groups/${group.id}`);
+            const res = await csrfFetch(
+                `/api/groups${mode === "update" ? `/${group.id}` : ""}`,
+                {
+                    method,
+                    body: JSON.stringify({
+                        name,
+                        about,
+                        type,
+                        private: isPrivate === "Private",
+                        city: locationArr[0],
+                        state: locationArr[1],
+                    }),
+                }
+            );
+            const newGroup = await res.json();
+
+            navigate(`/groups/${newGroup.id}`);
         }
     }
 
