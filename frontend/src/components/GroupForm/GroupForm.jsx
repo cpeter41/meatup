@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { csrfFetch } from "../../store/csrf";
 import { useSelector } from "react-redux";
 
-function GroupForm({ mode }) {
+function GroupForm({ update }) {
     const [location, setLocation] = useState("");
     const [name, setName] = useState("");
     const [about, setAbout] = useState("");
@@ -12,10 +12,13 @@ function GroupForm({ mode }) {
     const [image, setImage] = useState("");
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
+    const { groupId } = useParams();
 
     const group = useSelector((state) => state.groups.groupDetails);
     useEffect(() => {
-        if (mode === "update") {
+        if (!group) navigate(`/groups/${groupId}`);
+
+        if (update) {
             setName(group.name);
             setLocation([group.city, group.state].join(", "));
             setAbout(group.about);
@@ -24,7 +27,7 @@ function GroupForm({ mode }) {
             const prevImg = group.GroupImages.find((img) => img.preview);
             if (prevImg) setImage(prevImg.url);
         }
-    }, [mode, group]);
+    }, [update, group, navigate, groupId]);
 
     async function onSubmit(e) {
         const error = {}; // note: NOT the same as errors controlled variable
@@ -42,16 +45,24 @@ function GroupForm({ mode }) {
         if (isPrivate === "") error.visType = "Visibility Type is required";
 
         const fileExt = image.slice(image.lastIndexOf("."));
-        if (fileExt !== ".jpg" && fileExt !== ".jpeg" && fileExt !== ".png")
+        if (!update) {
+            if (fileExt !== ".jpg" && fileExt !== ".jpeg" && fileExt !== ".png")
+                error.image = "Image URL must end in .png, .jpg, or .jpeg";
+        } else if (
+            image !== "" &&
+            fileExt !== ".jpg" &&
+            fileExt !== ".jpeg" &&
+            fileExt !== ".png"
+        )
             error.image = "Image URL must end in .png, .jpg, or .jpeg";
 
         setErrors(error); // 'sync' current scoped error to controlled var
         if (!Object.keys(error).length) {
             // skip redux, send directly
-            const method = mode === "update" ? "PUT" : "POST";
+            const method = update ? "PUT" : "POST";
 
             const res = await csrfFetch(
-                `/api/groups${mode === "update" ? `/${group.id}` : ""}`,
+                `/api/groups${update ? `/${group.id}` : ""}`,
                 {
                     method,
                     body: JSON.stringify({
@@ -64,6 +75,23 @@ function GroupForm({ mode }) {
                     }),
                 }
             );
+
+            if (update) {
+                const prevImg = group.GroupImages.find((img) => img.preview);
+                if (prevImg)
+                    await csrfFetch(`/api/group-images/${prevImg.id}`, {
+                        method: "DELETE",
+                    });
+            }
+
+            await csrfFetch(`/api/groups/${group.id}/images`, {
+                method: "POST",
+                body: JSON.stringify({
+                    url: image,
+                    preview: true,
+                }),
+            });
+
             const newGroup = await res.json();
 
             navigate(`/groups/${newGroup.id}`);
@@ -171,7 +199,7 @@ function GroupForm({ mode }) {
             {errors.image && <span>{errors.image}</span>}
 
             <br />
-            <button type="submit">Create group</button>
+            <button type="submit">{update ? "Update" : "Create"} group</button>
         </form>
     );
 }
