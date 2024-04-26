@@ -1,0 +1,22 @@
+#event-details-section {
+    background-color: lightgray;
+}
+
+#img-details-section {
+    display: flex;
+    flex-direction: row;
+}
+
+#event-details {
+    display: flex;
+    flex-direction: column;
+}
+
+#event-times {
+    display: flex;
+}
+
+.time-label {
+    display: flex;
+    flex-direction: column;
+}

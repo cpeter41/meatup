@@ -1,16 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
-import { NavLink, useParams /*useNavigate*/ } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import { getEventDetails } from "../../store/event";
 import { IMG_NOT_FOUND } from "../../util/util";
-// import OpenModalMenuItem from "../Navigation/OpenModalMenuItem";
-// import ConfirmModal from "../ConfirmModal/ConfirmModal";
-import "./EventPage.css";
 import { useEffect, useState } from "react";
 import { csrfFetch } from "../../store/csrf";
+import "./EventPage.css";
 
 export default function EventPage() {
     const dispatch = useDispatch();
-    // const navigate = useNavigate();
     const { eventId } = useParams();
     const [isValidId, setIsValidId] = useState(false);
     const [host, setHost] = useState("");
@@ -18,9 +15,6 @@ export default function EventPage() {
     let previewImage;
 
     const event = useSelector((state) => state.events.eventDetails);
-    // const userId = useSelector((state) => state.session.user.id);
-
-    console.log(event);
 
     useEffect(() => {
         if (isNaN(eventId)) setIsValidId(false);
@@ -31,7 +25,6 @@ export default function EventPage() {
 
     useEffect(() => {
         const groupId = event && event.groupId;
-        console.log("id: ", groupId);
 
         async function getHost() {
             const res = await csrfFetch(`/api/groups/${groupId}`);
@@ -53,11 +46,48 @@ export default function EventPage() {
 
     return isValidId ? (
         <div>
-            <span>
-                &lt; <NavLink to="/events">Events</NavLink>
-            </span>
-            <h1>{event && event.name}</h1>
-            <span>Hosted by {host}</span>
+            <section>
+                <span>
+                    &lt; <NavLink to="/events">Events</NavLink>
+                </span>
+                <h1>{event && event.name}</h1>
+                <span>Hosted by {host}</span>
+            </section>
+            <section id="event-details-section">
+                <div id="img-details-section">
+                    <img src={previewImage.url} />
+                    <div id="event-details">
+                        <div id="event-times">
+                            <div className="time-label">
+                                <span>START</span>
+                                <span>END</span>
+                            </div>
+                            <div className="time-label">
+                                {event && (
+                                    <>
+                                        <span>
+                                            {event.startDate.slice(0, 10)} ·{" "}
+                                            {event.startDate.slice(10)}
+                                        </span>
+                                        <span>
+                                            {event.endDate.slice(0, 10)} ·{" "}
+                                            {event.endDate.slice(10)}
+                                        </span>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                        <span>
+                            {event && event.price === 0 ? "FREE" : event.price}
+                        </span>
+                        <span>{event && event.type}</span>
+                    </div>
+                </div>
+                <div>
+                    <h2>Details</h2>
+                    <p>{event && event.description}</p>
+                </div>
+            </section>
         </div>
     ) : (
         <h1>Page Not Found</h1>
