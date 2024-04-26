@@ -21,11 +21,12 @@ export default function EventPage() {
         if (isNaN(eventId)) setIsValidId(false);
         else setIsValidId(true);
 
-        if (isValidId) {
-            dispatch(getEventDetails(eventId));
-            dispatch(getGroupDetails(event.groupId));
-        }
-    }, [dispatch, event.groupId, eventId, isValidId]);
+        if (isValidId) dispatch(getEventDetails(eventId));
+    }, [dispatch, eventId, isValidId]);
+
+    useEffect(() => {
+        if (event) dispatch(getGroupDetails(event.groupId));
+    }, [dispatch, event])
 
     if (event && event.EventImages) {
         previewImage = event.EventImages.find(
