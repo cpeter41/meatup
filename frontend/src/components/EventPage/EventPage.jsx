@@ -4,15 +4,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { getEventDetails } from "../../store/event";
 import { getGroupDetails } from "../../store/group";
 import { IMG_NOT_FOUND } from "../../util/util";
+import OpenModalMenuItem from "../Navigation/OpenModalMenuItem";
+import ConfirmModal from "../ConfirmModal";
 import "./EventPage.css";
 
 export default function EventPage() {
     const dispatch = useDispatch();
     const { eventId } = useParams();
     const [isValidId, setIsValidId] = useState(false);
-
-    let previewImage;
-
     const event = useSelector((state) => state.events.eventDetails);
     const group = useSelector((state) => state.groups.groupDetails);
     const userId = useSelector((state) => state.session.user.id);
@@ -26,8 +25,9 @@ export default function EventPage() {
 
     useEffect(() => {
         if (event) dispatch(getGroupDetails(event.groupId));
-    }, [dispatch, event])
+    }, [dispatch, event]);
 
+    let previewImage;
     if (event && event.EventImages) {
         previewImage = event.EventImages.find(
             (eventImage) => eventImage.preview
@@ -81,7 +81,12 @@ export default function EventPage() {
                         </span>
                         <span>{event && event.type}</span>
                         {group && userId === group.organizerId && (
-                            <button>Delete</button>
+                            <OpenModalMenuItem
+                            itemText="Delete"
+                            modalComponent={
+                                <ConfirmModal type="event" method="DELETE" id={event.id} />
+                            }
+                        />
                         )}
                     </div>
                 </div>

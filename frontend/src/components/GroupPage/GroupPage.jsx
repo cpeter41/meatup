@@ -12,9 +12,6 @@ function GroupPage() {
     const navigate = useNavigate();
     const { groupId } = useParams();
     const [isValidId, setIsValidId] = useState(false);
-
-    let previewImage;
-
     useEffect(() => {
         if (isNaN(groupId)) setIsValidId(false);
         else setIsValidId(true);
@@ -25,6 +22,7 @@ function GroupPage() {
     const group = useSelector((state) => state.groups.groupDetails);
     const userId = useSelector((state) => state.session.user.id);
 
+    let previewImage;
     if (group && group.GroupImages) {
         previewImage = group.GroupImages.find(
             (groupImage) => groupImage.preview
@@ -75,7 +73,7 @@ function GroupPage() {
                             <OpenModalMenuItem
                                 itemText="Delete"
                                 modalComponent={
-                                    <ConfirmModal mode="delete" id={groupId} />
+                                    <ConfirmModal type="group" mode="delete" id={groupId} />
                                 }
                             />
                         </div>
