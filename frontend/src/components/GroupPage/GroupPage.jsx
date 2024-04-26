@@ -4,7 +4,7 @@ import { getGroupDetails } from "../../store/group";
 import { useEffect, useState } from "react";
 import { IMG_NOT_FOUND } from "../../util/util";
 import OpenModalMenuItem from "../Navigation/OpenModalMenuItem";
-import ConfirmModal from "../ConfirmModal/ConfirmModal";
+import ConfirmModal from "../ConfirmModal";
 import "./GroupPage.css";
 
 function GroupPage() {

@@ -10,33 +10,22 @@ export default function EventPage() {
     const dispatch = useDispatch();
     const { eventId } = useParams();
     const [isValidId, setIsValidId] = useState(false);
-    const [host, setHost] = useState("");
 
     let previewImage;
 
     const event = useSelector((state) => state.events.eventDetails);
     const group = useSelector((state) => state.groups.groupDetails);
-    console.log(event);
+    const userId = useSelector((state) => state.session.user.id);
 
     useEffect(() => {
         if (isNaN(eventId)) setIsValidId(false);
         else setIsValidId(true);
 
-        if (isValidId) dispatch(getEventDetails(eventId));
-    }, [dispatch, eventId, isValidId]);
-
-    useEffect(() => {
-        // const groupId = event && event.groupId;
-        if (host === "") {
-            dispatch(getGroupDetails);
-            if (group && group.Organizer)
-                setHost(
-                    [group.Organizer.firstName, group.Organizer.lastName].join(
-                        " "
-                    )
-                );
+        if (isValidId) {
+            dispatch(getEventDetails(eventId));
+            dispatch(getGroupDetails(event.groupId));
         }
-    }, [dispatch, event, group, host]);
+    }, [dispatch, event.groupId, eventId, isValidId]);
 
     if (event && event.EventImages) {
         previewImage = event.EventImages.find(
@@ -52,7 +41,14 @@ export default function EventPage() {
                     &lt; <NavLink to="/events">Events</NavLink>
                 </span>
                 <h1>{event && event.name}</h1>
-                <span>Hosted by {host}</span>
+                <span>
+                    Hosted by{" "}
+                    {group &&
+                        [
+                            group.Organizer.firstName,
+                            group.Organizer.lastName,
+                        ].join(" ")}
+                </span>
             </section>
             <section id="event-details-section">
                 <div id="img-details-section">
@@ -79,9 +75,13 @@ export default function EventPage() {
                             </div>
                         </div>
                         <span>
-                            {event && (event.price === 0 ? "FREE" : event.price)}
+                            {event &&
+                                (event.price === 0 ? "FREE" : event.price)}
                         </span>
                         <span>{event && event.type}</span>
+                        {group && userId === group.organizerId && (
+                            <button>Delete</button>
+                        )}
                     </div>
                 </div>
                 <div>
