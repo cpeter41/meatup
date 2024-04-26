@@ -3,6 +3,8 @@ import { NavLink, useParams, useNavigate } from "react-router-dom";
 import { getGroupDetails } from "../../store/group";
 import { useEffect, useState } from "react";
 import { IMG_NOT_FOUND } from "../../util/util";
+import OpenModalMenuItem from "../Navigation/OpenModalMenuItem";
+import ConfirmModal from "../ConfirmModal/ConfirmModal";
 import "./GroupPage.css";
 
 function GroupPage() {
@@ -64,7 +66,12 @@ function GroupPage() {
                             >
                                 Update
                             </button>
-                            <button>Delete</button>
+                            <OpenModalMenuItem
+                                itemText="Delete"
+                                modalComponent={
+                                    <ConfirmModal mode="delete" id={groupId} />
+                                }
+                            />
                         </div>
                     ) : (
                         <button id="join-group-button">Join this group</button>
