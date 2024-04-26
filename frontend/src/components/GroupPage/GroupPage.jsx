@@ -58,7 +58,13 @@ function GroupPage() {
                     </div>
                     {group && userId === group.organizerId ? (
                         <div>
-                            <button>Create event</button>
+                            <button
+                                onClick={() =>
+                                    navigate(`/groups/${groupId}/events/new`)
+                                }
+                            >
+                                Create event
+                            </button>
                             <button
                                 onClick={() =>
                                     navigate(`/groups/${groupId}/edit`)

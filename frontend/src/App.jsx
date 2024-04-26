@@ -8,6 +8,7 @@ import GroupPage from "./components/GroupPage";
 import GroupForm from "./components/GroupForm";
 import EventsList from "./components/EventsList";
 import EventPage from "./components/EventPage";
+import EventForm from "./components/EventForm";
 import * as sessionActions from "./store/session";
 import { Modal } from "./context/Modal";
 
@@ -61,6 +62,10 @@ const router = createBrowserRouter([
             {
                 path: "/events/:eventId",
                 element: <EventPage />,
+            },
+            {
+                path: "/groups/:groupId/events/new",
+                element: <EventForm />,
             },
             {
                 path: "*",

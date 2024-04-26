@@ -47,12 +47,15 @@ function validateEventData(req, res) {
         err.errors.capacity = "Capacity must be an integer";
     if (isNaN(parseFloat(price)) && parseFloat(price) > 0) err.errors.price = "Price is invalid";
     if (!description) err.errors.description = "Description is required";
-    if (startDate < newFormattedDate())
+    if (startDate < newFormattedDate()) {
+        console.log(newFormattedDate());
         err.errors.startDate = "Start date must be in the future";
+    }
     if (endDate < startDate)
         err.errors.endDate = "End date is less than start date";
 
     if (Object.keys(err.errors).length) {
+        console.log(err);
         res.status(400).json(err);
         return false;
     } else return true;
@@ -63,6 +66,7 @@ function newFormattedDate() {
         .toLocaleString("en-US", { hour12: false })
         .split(",");
     const dateParts = dateTimeParts[0].split("/");
+    if (dateParts[0].length === 1) dateParts[0] = `0${dateParts[0]}`;
     const newDate = [dateParts[2], dateParts[0], dateParts[1]].join("-");
     return [newDate, dateTimeParts[1]].join("");
 };

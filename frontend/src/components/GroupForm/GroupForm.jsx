@@ -17,8 +17,7 @@ function GroupForm({ update }) {
     const group = useSelector((state) => state.groups.groupDetails);
     useEffect(() => {
         if (!group) navigate(`/groups/${groupId}`);
-
-        if (update) {
+        else if (update) {
             setName(group.name);
             setLocation([group.city, group.state].join(", "));
             setAbout(group.about);
@@ -30,8 +29,8 @@ function GroupForm({ update }) {
     }, [update, group, navigate, groupId]);
 
     async function onSubmit(e) {
-        const error = {}; // note: NOT the same as errors controlled variable
         e.preventDefault();
+        const error = {}; // note: NOT the same as 'errors' controlled variable
         const locationArr = location.split(", ");
 
         if (location === "") error.location = "Location is required";
@@ -62,6 +61,7 @@ function GroupForm({ update }) {
             const method = update ? "PUT" : "POST";
 
             const res = await csrfFetch(
+                // TODO: GET NEW GROUP'S ID
                 `/api/groups${update ? `/${group.id}` : ""}`,
                 {
                     method,
@@ -76,23 +76,23 @@ function GroupForm({ update }) {
                 }
             );
 
+            const newGroup = await res.json();
+
             if (update) {
-                const prevImg = group.GroupImages.find((img) => img.preview);
+                const prevImg = newGroup.GroupImages.find((img) => img.preview);
                 if (prevImg)
                     await csrfFetch(`/api/group-images/${prevImg.id}`, {
                         method: "DELETE",
                     });
             }
 
-            await csrfFetch(`/api/groups/${group.id}/images`, {
+            await csrfFetch(`/api/groups/${newGroup.id}/images`, {
                 method: "POST",
                 body: JSON.stringify({
                     url: image,
                     preview: true,
                 }),
             });
-
-            const newGroup = await res.json();
 
             navigate(`/groups/${newGroup.id}`);
         }

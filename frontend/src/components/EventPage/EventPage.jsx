@@ -1,9 +1,9 @@
-import { useDispatch, useSelector } from "react-redux";
-import { NavLink, useParams } from "react-router-dom";
-import { getEventDetails } from "../../store/event";
-import { IMG_NOT_FOUND } from "../../util/util";
 import { useEffect, useState } from "react";
-import { csrfFetch } from "../../store/csrf";
+import { NavLink, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getEventDetails } from "../../store/event";
+import { getGroupDetails } from "../../store/group";
+import { IMG_NOT_FOUND } from "../../util/util";
 import "./EventPage.css";
 
 export default function EventPage() {
@@ -15,6 +15,8 @@ export default function EventPage() {
     let previewImage;
 
     const event = useSelector((state) => state.events.eventDetails);
+    const group = useSelector((state) => state.groups.groupDetails);
+    console.log(event);
 
     useEffect(() => {
         if (isNaN(eventId)) setIsValidId(false);
@@ -24,18 +26,17 @@ export default function EventPage() {
     }, [dispatch, eventId, isValidId]);
 
     useEffect(() => {
-        const groupId = event && event.groupId;
-
-        async function getHost() {
-            const res = await csrfFetch(`/api/groups/${groupId}`);
-            const obj = await res.json();
-            setHost(
-                [obj.Organizer.firstName, obj.Organizer.lastName].join(" ")
-            );
+        // const groupId = event && event.groupId;
+        if (host === "") {
+            dispatch(getGroupDetails);
+            if (group && group.Organizer)
+                setHost(
+                    [group.Organizer.firstName, group.Organizer.lastName].join(
+                        " "
+                    )
+                );
         }
-
-        if (groupId) getHost();
-    }, [event]);
+    }, [dispatch, event, group, host]);
 
     if (event && event.EventImages) {
         previewImage = event.EventImages.find(
@@ -55,7 +56,7 @@ export default function EventPage() {
             </section>
             <section id="event-details-section">
                 <div id="img-details-section">
-                    <img src={previewImage.url} />
+                    <img src={previewImage && previewImage.url} />
                     <div id="event-details">
                         <div id="event-times">
                             <div className="time-label">
@@ -78,7 +79,7 @@ export default function EventPage() {
                             </div>
                         </div>
                         <span>
-                            {event && event.price === 0 ? "FREE" : event.price}
+                            {event && (event.price === 0 ? "FREE" : event.price)}
                         </span>
                         <span>{event && event.type}</span>
                     </div>
