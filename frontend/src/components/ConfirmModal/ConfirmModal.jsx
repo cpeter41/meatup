@@ -15,6 +15,7 @@ export default function ConfirmModal({ method, type, id }) {
         );
 
         const message = await res.json().then(closeModal);
+        console.log(method, type, id, res);
         navigate(`/${type === "group" ? "groups" : "events"}`);
         return message;
     };

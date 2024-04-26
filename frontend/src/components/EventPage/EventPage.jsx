@@ -80,7 +80,7 @@ export default function EventPage() {
                                 (event.price === 0 ? "FREE" : event.price)}
                         </span>
                         <span>{event && event.type}</span>
-                        {group && userId === group.organizerId && (
+                        {group && event && userId === group.organizerId && (
                             <OpenModalMenuItem
                             itemText="Delete"
                             modalComponent={

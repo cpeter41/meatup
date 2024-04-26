@@ -73,7 +73,7 @@ function GroupPage() {
                             <OpenModalMenuItem
                                 itemText="Delete"
                                 modalComponent={
-                                    <ConfirmModal type="group" mode="delete" id={groupId} />
+                                    <ConfirmModal type="group" method="DELETE" id={groupId} />
                                 }
                             />
                         </div>
