@@ -31,7 +31,7 @@ function GroupsList() {
                                     <div className="placeholder-img"></div>
                                     <div className="group-info-card">
                                         <h3>{group.name}</h3>
-                                        <span>{group.city}</span>
+                                        <span>{group.city}, {group.state}</span>
                                         <p>{group.about}</p>
                                         <span>
                                             # events ·{" "}
