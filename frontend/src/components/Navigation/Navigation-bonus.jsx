@@ -17,10 +17,6 @@ function Navigation({ isLoaded }) {
     const dispatch = useDispatch();
     const sessionUser = useSelector((state) => state.session.user);
 
-    const logInDemo = () => {
-        return dispatch(sessionActions.login(logInCredentials));
-    };
-
     return (
         <div id="nav-bar">
             <NavLink to="/">
@@ -33,7 +29,6 @@ function Navigation({ isLoaded }) {
                 </div>
             ) : (
                 <div className="nav-user">
-                    <button onClick={logInDemo}>Demo User Log In</button>
                     <OpenModalMenuItem
                         itemText="Log In"
                         modalComponent={<LoginFormModal />}
