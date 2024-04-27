@@ -1,20 +1,12 @@
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
 import ProfileButton from "./ProfileButton-bonus";
-import * as sessionActions from "../../store/session";
 import OpenModalMenuItem from "./OpenModalMenuItem";
 import LoginFormModal from "../LoginFormModal";
 import SignupFormModal from "../SignupFormModal";
 import "./Navigation.css";
 
-const logInCredentials = {
-    credential: "demo@guy.com",
-    password: "password123",
-};
-
 function Navigation({ isLoaded }) {
-    const dispatch = useDispatch();
     const sessionUser = useSelector((state) => state.session.user);
 
     return (
@@ -24,7 +16,9 @@ function Navigation({ isLoaded }) {
             </NavLink>
             {isLoaded && sessionUser ? (
                 <div className="nav-user">
-                    <NavLink className="nav-link" to="/groups/new">Start a new group</NavLink>
+                    <NavLink className="nav-link" to="/groups/new">
+                        Start a new group
+                    </NavLink>
                     <ProfileButton user={sessionUser} />
                 </div>
             ) : (
