@@ -17,7 +17,7 @@ function GroupPage() {
     const [past, setPast] = useState([]);
     const group = useSelector((state) => state.groups.groupDetails);
     const events = useSelector((state) => state.groups.groupEvents);
-    const userId = useSelector((state) => state.session.user.id);
+    const user = useSelector((state) => state.session.user);
 
     useEffect(() => {
         if (isNaN(groupId)) setIsValidId(false);
@@ -91,7 +91,7 @@ function GroupPage() {
                             {group && group.Organizer.lastName}
                         </span>
                     </div>
-                    {group && userId === group.organizerId ? (
+                    {group && user && user.id === group.organizerId ? (
                         <div>
                             <button
                                 onClick={() =>

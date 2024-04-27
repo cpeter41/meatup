@@ -14,7 +14,7 @@ export default function EventPage() {
     const [isValidId, setIsValidId] = useState(false);
     const event = useSelector((state) => state.events.eventDetails);
     const group = useSelector((state) => state.groups.groupDetails);
-    const userId = useSelector((state) => state.session.user.id);
+    const user = useSelector((state) => state.session.user);
 
     useEffect(() => {
         if (isNaN(eventId)) setIsValidId(false);
@@ -80,14 +80,21 @@ export default function EventPage() {
                                 (event.price === 0 ? "FREE" : event.price)}
                         </span>
                         <span>{event && event.type}</span>
-                        {group && event && userId === group.organizerId && (
-                            <OpenModalMenuItem
-                            itemText="Delete"
-                            modalComponent={
-                                <ConfirmModal type="event" method="DELETE" id={event.id} />
-                            }
-                        />
-                        )}
+                        {group &&
+                            event &&
+                            user &&
+                            user.id === group.organizerId && (
+                                <OpenModalMenuItem
+                                    itemText="Delete"
+                                    modalComponent={
+                                        <ConfirmModal
+                                            type="event"
+                                            method="DELETE"
+                                            id={event.id}
+                                        />
+                                    }
+                                />
+                            )}
                     </div>
                 </div>
                 <div>

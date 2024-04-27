@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { csrfFetch } from "../../store/csrf";
 import { useSelector } from "react-redux";
 
@@ -12,12 +12,10 @@ function GroupForm({ update }) {
     const [image, setImage] = useState("");
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
-    const { groupId } = useParams();
 
     const group = useSelector((state) => state.groups.groupDetails);
     useEffect(() => {
-        if (!group) navigate(`/groups/${groupId}`);
-        else if (update) {
+        if (group && update) {
             setName(group.name);
             setLocation([group.city, group.state].join(", "));
             setAbout(group.about);
@@ -26,7 +24,7 @@ function GroupForm({ update }) {
             const prevImg = group.GroupImages.find((img) => img.preview);
             if (prevImg) setImage(prevImg.url);
         }
-    }, [update, group, navigate, groupId]);
+    }, [update, group]);
 
     async function onSubmit(e) {
         e.preventDefault();

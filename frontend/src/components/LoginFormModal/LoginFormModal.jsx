@@ -27,7 +27,7 @@ function LoginFormModal() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        setData({});
+        setData("");
         return dispatch(sessionActions.login({ credential, password }))
             .then(closeModal)
             .catch(async (res) => {
@@ -37,15 +37,17 @@ function LoginFormModal() {
     };
 
     const logInDemo = () => {
-        setCredential(demoCredentials.credential);
-        setPassword(demoCredentials.password);
+        return dispatch(sessionActions.login(demoCredentials))
+        .then(closeModal)
+        // setCredential(demoCredentials.credential);
+        // setPassword(demoCredentials.password);
     };
 
     return (
-        <div className="flex-col">
+        <div className="flex-col" id="login-container">
             <h1>Log In</h1>
-            <form onSubmit={handleSubmit} className="flex-col">
-                {data.length > 0 && <p>{data}</p>}
+            <form onSubmit={handleSubmit} className="flex-col" id="login-form">
+                {data.length > 0 && <p id="login-error">{data}</p>}
                 <label>Username or Email</label>
                 <input
                     type="text"
@@ -65,7 +67,7 @@ function LoginFormModal() {
                 <button type="submit" disabled={disabled} id="submit">
                     Log In
                 </button>
-                <button onClick={logInDemo} type="submit" id="demo-submit">
+                <button onClick={logInDemo} id="demo-submit">
                     Demo User
                 </button>
             </form>

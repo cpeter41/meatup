@@ -44,10 +44,6 @@
     object-fit: cover;
 }
 
-.nav-link {
-    color: teal;
-}
-
 .disabled {
     color: lightgray;
 }

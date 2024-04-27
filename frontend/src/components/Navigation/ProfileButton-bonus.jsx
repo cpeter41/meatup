@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import * as sessionActions from "../../store/session";
-// import OpenModalMenuItem from "./OpenModalMenuItem";
-// import LoginFormModal from "../LoginFormModal";
-// import SignupFormModal from "../SignupFormModal";
+import { useNavigate } from "react-router-dom";
+import "./Navigation.css";
 
 function ProfileButton({ user }) {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const [showMenu, setShowMenu] = useState(false);
     const ulRef = useRef();
@@ -35,21 +35,37 @@ function ProfileButton({ user }) {
         e.preventDefault();
         dispatch(sessionActions.logout());
         closeMenu();
+        navigate("/");
     };
 
-    const ulClassName = "profile-dropdown" + (showMenu ? "" : " hidden");
+    const ulClassName =
+        "profile-dropdown" +
+        (showMenu ? "" : " hidden") +
+        " half-radius-border";
 
     return (
         <>
-            <button onClick={toggleMenu}>
-                <i className="fas fa-user-circle" />
+            <button id="profile-button" onClick={toggleMenu}>
+                <i
+                    className="fas fa-user-circle fa-xl"
+                    style={{ color: "rgb(229, 91, 72)" }}
+                />
+                {showMenu ? (
+                    <i className="fa-solid fa-angle-down fa-xl"></i>
+                ) : (
+                    <i className="fa-solid fa-angle-up fa-xl"></i>
+                )}
             </button>
             <ul className={ulClassName} ref={ulRef}>
                 <>
-                    <li>Hello, {user.firstName}</li>
-                    <li>{user.email}</li>
-                    <li>
-                        <button onClick={logout}>Log Out</button>
+                    <li className="profile-li">Hello, {user.firstName}</li>
+                    <li className="profile-li" id="dropdown-email">
+                        {user.email}
+                    </li>
+                    <li id="logout-li">
+                        <button onClick={logout} id="logout">
+                            Log Out
+                        </button>
                     </li>
                 </>
             </ul>
