@@ -13,7 +13,7 @@ function LoginFormModal() {
     const dispatch = useDispatch();
     const [credential, setCredential] = useState("");
     const [password, setPassword] = useState("");
-    const [errors, setErrors] = useState({});
+    const [data, setData] = useState("");
     const [disabled, setDisabled] = useState(true);
     const { closeModal } = useModal();
 
@@ -27,19 +27,16 @@ function LoginFormModal() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        setErrors({});
+        setData({});
         return dispatch(sessionActions.login({ credential, password }))
             .then(closeModal)
             .catch(async (res) => {
-                const data = await res.json();
-                if (data && data.errors) {
-                    setErrors(data.errors);
-                }
+                if (res.status >= 400)
+                    setData("The provided credentials were invalid.");
             });
     };
 
     const logInDemo = () => {
-        // return dispatch(sessionActions.login(demoCredentials)).then(closeModal);
         setCredential(demoCredentials.credential);
         setPassword(demoCredentials.password);
     };
@@ -48,30 +45,28 @@ function LoginFormModal() {
         <div className="flex-col">
             <h1>Log In</h1>
             <form onSubmit={handleSubmit} className="flex-col">
-                <label>
-                    <input
-                        type="text"
-                        value={credential}
-                        placeholder="Username or Email"
-                        onChange={(e) => setCredential(e.target.value)}
-                        required
-                    />
-                </label>
-                <label>
-                    <input
-                        type="password"
-                        value={password}
-                        placeholder="Password"
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </label>
-                {errors.credential && <p>{errors.credential}</p>}
-                <button type="submit" disabled={disabled}>
+                {data.length > 0 && <p>{data}</p>}
+                <label>Username or Email</label>
+                <input
+                    type="text"
+                    value={credential}
+                    placeholder="Username or Email"
+                    onChange={(e) => setCredential(e.target.value)}
+                    required
+                />
+                <label>Password</label>
+                <input
+                    type="password"
+                    value={password}
+                    placeholder="Password"
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                />
+                <button type="submit" disabled={disabled} id="submit">
                     Log In
                 </button>
-                <button onClick={logInDemo} type="submit">
-                    Demo User Log In
+                <button onClick={logInDemo} type="submit" id="demo-submit">
+                    Demo User
                 </button>
             </form>
         </div>
