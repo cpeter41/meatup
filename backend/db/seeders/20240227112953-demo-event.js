@@ -45,6 +45,42 @@ const events = [
         startDate: "2025-10-20 00:00:00",
         endDate: "2025-10-25 00:00:00",
     },
+    {
+        venueId: 1,
+        groupId: 3,
+        name: "Filet Tasting Sesh",
+        description:
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris facilisis congue odio, id tempor nisl gravida ut. Vestibulum eget purus elit.",
+        type: "In person",
+        capacity: 16,
+        price: 39.99,
+        startDate: "2024-03-20 12:00:00",
+        endDate: "2024-03-20 15:00:00",
+    },
+    {
+        venueId: 1,
+        groupId: 3,
+        name: "Flamin' Yon Concert",
+        description:
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris facilisis congue odio, id tempor nisl gravida ut. Vestibulum eget purus elit.",
+        type: "In person",
+        capacity: 200,
+        price: 65.49,
+        startDate: "2024-06-20 18:00:00",
+        endDate: "2024-06-21 00:00:00",
+    },
+    {
+        venueId: 1,
+        groupId: 3,
+        name: "Pizza Party",
+        description:
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris facilisis congue odio, id tempor nisl gravida ut. Vestibulum eget purus elit.",
+        type: "In person",
+        capacity: 30,
+        price: 5,
+        startDate: "2024-11-11 12:30:00",
+        endDate: "2024-11-11 17:00:00",
+    },
 ];
 
 /** @type {import('sequelize-cli').Migration} */

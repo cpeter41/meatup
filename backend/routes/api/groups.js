@@ -98,8 +98,12 @@ router.get("/:groupId", async (req, res, next) => {
         return res.status(404).json({ message: "Group couldn't be found" });
 
     foundGroup.dataValues.numMembers = await foundGroup.countMember();
-    foundGroup.dataValues.createdAt = formatDate(foundGroup.dataValues.createdAt);
-    foundGroup.dataValues.updatedAt = formatDate(foundGroup.dataValues.updatedAt);
+    foundGroup.dataValues.createdAt = formatDate(
+        foundGroup.dataValues.createdAt
+    );
+    foundGroup.dataValues.updatedAt = formatDate(
+        foundGroup.dataValues.updatedAt
+    );
     foundGroup = foundGroup.toJSON();
 
     if (foundGroup.Venue && foundGroup.Venue.length) {
@@ -418,6 +422,11 @@ router.post("/:groupId/venues", requireAuth, async (req, res, next) => {
 
 router.get("/:groupId/events", async (req, res, next) => {
     const { groupId } = req.params;
+    const foundGroup = await Group.findByPk(groupId);
+
+    if (!foundGroup)
+        return res.status(404).json({ message: "Group couldn't be found" });
+
     const events = await Event.findAll({
         where: { groupId: groupId },
         attributes: [
@@ -440,9 +449,6 @@ router.get("/:groupId/events", async (req, res, next) => {
             },
         ],
     });
-
-    if (!events.length)
-        return res.status(404).json({ message: "Group couldn't be found" });
 
     // consider using aggregate fn instead of for loop
     for (let event of events) {

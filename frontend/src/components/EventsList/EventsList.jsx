@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getEvents } from "../../store/event";
 import { NavLink } from "react-router-dom";
 import "./EventsList.css";
+import EventItem from "./EventItem";
 
 export default function EventsList() {
     const dispatch = useDispatch();
@@ -25,28 +26,9 @@ export default function EventsList() {
             <ul>
                 {eventsObj &&
                     eventsObj.Events &&
-                    eventsObj.Events.map((event) => {
-                        return (
-                            <li key={event.id}>
-                                <NavLink to={`/events/${event.id}`}>
-                                    <div>
-                                        <img src={event.previewImage} />
-                                        <div>
-                                            <span>
-                                                {event.startDate.slice(0, 10)} ·{" "}
-                                                {event.startDate.slice(10)}
-                                            </span>
-                                            <h3>{event.name}</h3>
-                                            <p>
-                                                {event.Venue.city},{" "}
-                                                {event.Venue.state}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </NavLink>
-                            </li>
-                        );
-                    })}
+                    eventsObj.Events.map((event) => (
+                        <EventItem key={event.id} event={event} />
+                    ))}
             </ul>
         </div>
     );

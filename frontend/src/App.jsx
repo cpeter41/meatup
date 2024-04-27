@@ -6,7 +6,7 @@ import LandingPage from "./components/LandingPage";
 import GroupsList from "./components/GroupsList";
 import GroupPage from "./components/GroupPage";
 import GroupForm from "./components/GroupForm";
-import EventsList from "./components/EventsList";
+import { EventsList } from "./components/EventsList";
 import EventPage from "./components/EventPage";
 import EventForm from "./components/EventForm";
 import * as sessionActions from "./store/session";

@@ -1,3 +1,2 @@
-import EventsList from "./EventsList";
-
-export default EventsList;
+export { default as EventsList } from "./EventsList.jsx";
+export { default as EventItem } from "./EventItem.jsx";
