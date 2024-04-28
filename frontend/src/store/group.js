@@ -40,6 +40,7 @@ export const getGroups = () => async (dispatch) => {
                     group.eventCount = data.Events.length;
                 }
             });
+        // TODO: figure out how to avoid this, its slow
         setTimeout(() => {
             dispatch(listGroups(groups.Groups));
         }, groups?.Groups?.length * 200 ?? 1000);

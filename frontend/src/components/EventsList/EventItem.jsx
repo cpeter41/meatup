@@ -15,14 +15,20 @@ export default function EventItem({ event, list }) {
                         src={event.previewImage}
                     />
                     <div className="event-card-title">
-                        <span style={{ color: "teal", fontSize: "small" }}>
-                            {event.startDate.slice(0, 10)} ·{" "}
-                            {event.startDate.slice(10)}
-                        </span>
-                        <h3>{event.name}</h3>
-                        <p style={{ color: "gray" }}>
-                            {event.Venue.city}, {event.Venue.state}
-                        </p>
+                        {event && (
+                            <>
+                                <span
+                                    style={{ color: "teal", fontSize: "small" }}
+                                >
+                                    {event.startDate.slice(0, 10)} ·{" "}
+                                    {event.startDate.slice(10)}
+                                </span>
+                                <h3>{event.name}</h3>
+                                <p style={{ color: "gray" }}>
+                                    {event.Venue.city}, {event.Venue.state}
+                                </p>
+                            </>
+                        )}
                     </div>
                 </div>
                 <p>{event.description}</p>

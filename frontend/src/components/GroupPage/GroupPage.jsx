@@ -45,11 +45,24 @@ function GroupPage() {
         if (events) {
             const upcomingEvents = [];
             const pastEvents = [];
+            let lastUpcomingDate, lastPastDate;
             events.Events.forEach((event) => {
                 const item = <EventItem key={event.id} event={event} />;
-                if (event.startDate > newFormattedDate())
-                    upcomingEvents.push(item);
-                else pastEvents.push(item);
+                // sort
+                if (event.startDate > newFormattedDate()) {
+                    if (event.startDate > lastUpcomingDate) {
+                        upcomingEvents.unshift(item);
+                        lastUpcomingDate = event.startDate;
+                    }
+                    else upcomingEvents.push(item);
+                }
+                else {
+                    if (event.startDate > lastPastDate) {
+                        pastEvents.push(item);
+                        lastPastDate = event.startDate;
+                    }
+                    else pastEvents.unshift(item);
+                }
             });
             setUpcoming(upcomingEvents);
             setPast(pastEvents);
@@ -101,7 +114,8 @@ function GroupPage() {
                         </div>
                         {group && user && user.id === group.organizerId ? (
                             <div className="manage-buttons">
-                                <button className="red-button"
+                                <button
+                                    className="red-button"
                                     onClick={() =>
                                         navigate(
                                             `/groups/${groupId}/events/new`
@@ -157,7 +171,9 @@ function GroupPage() {
                 </div>
                 {/* TODO: SORT EVENTS BY RECENCY */}
                 <div id="upcoming-events">
-                    <h2>Upcoming Events {upcoming && `(${upcoming.length})`}</h2>
+                    <h2>
+                        Upcoming Events {upcoming && `(${upcoming.length})`}
+                    </h2>
                     <ul style={{ listStyleType: "none", padding: 0 }}>
                         {events && upcoming}
                     </ul>
