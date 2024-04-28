@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getGroupDetails } from "../../store/group";
 import { csrfFetch } from "../../store/csrf";
+import "./EventForm.css";
 
 // placeholder values for POST req since venues dont exist as a feature yet
 const DEFAULT_VENUE_ID = 1;
@@ -82,108 +83,153 @@ export default function EventForm() {
     }
 
     return (
-        <form onSubmit={onSubmit}>
-            {group && <h1>Create an event for {group.name}</h1>}
-            <label>
-                <h2>What is the name of your event?</h2>
-                <input
-                    type="text"
-                    name="name"
-                    placeholder="Event Name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                />
-            </label>
-            {errors.name && <span>{errors.name}</span>}
-            <label>
-                <h2>Is this an in person or online event?</h2>
-                <select value={type} onChange={(e) => setType(e.target.value)}>
-                    <option>{""}</option>
-                    <option>{"In person"}</option>
-                    <option>{"Online"}</option>
-                </select>
-            </label>
-            {errors.type && <span>{errors.type}</span>}
+        <div
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+            }}
+        >
+            <form onSubmit={onSubmit} id="event-form">
+                {group && <h1>Create a new event for {group.name}</h1>}
+                <label>
+                    <p>What is the name of your event?</p>
+                    <input
+                        type="text"
+                        name="name"
+                        placeholder="Event Name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                    />
+                </label>
+                <br />
+                {errors.name && (
+                    <span className="error-msg">{errors.name}</span>
+                )}
+                <hr />
+                <label>
+                    {/* TODO: check if blank first option is OK */}
+                    <p>Is this an in-person or online event?</p>
+                    <select
+                        value={type}
+                        onChange={(e) => setType(e.target.value)}
+                    >
+                        <option>{""}</option>
+                        <option>{"In person"}</option>
+                        <option>{"Online"}</option>
+                    </select>
+                </label>
+                <br />
+                {errors.type && (
+                    <span className="error-msg">{errors.type}</span>
+                )}
 
-            <label>
-                <h2>What is the price for your event?</h2>
-                <span>$</span>
-                <input
-                    type="text"
-                    name="price"
-                    placeholder="0"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                />
-            </label>
-            {errors.price && <span>{errors.price}</span>}
+                <label>
+                    <p>What is the price for your event?</p>
+                    <input
+                        type="text"
+                        name="price"
+                        placeholder="0"
+                        value={price}
+                        id="price-input"
+                        onChange={(e) => setPrice(e.target.value)}
+                    />
+                    <span
+                        style={{
+                            position: "relative",
+                            right: "200px",
+                        }}
+                    >
+                        $
+                    </span>
+                </label>
+                <br />
+                {errors.price && (
+                    <span className="error-msg">{errors.price}</span>
+                )}
+                <hr />
 
-            <label>
-                <h2>When does your event start?</h2>
-                <input
-                    type="datetime-local"
-                    name="startTime"
-                    value={startDate}
-                    onChange={(e) => {
-                        const dateTime = e.target.value.split("T");
-                        const newDate = dateTime[0].concat(
-                            " ",
-                            dateTime[1],
-                            ":00"
-                        );
-                        setStartDate(newDate);
-                    }}
-                />
-            </label>
-            {errors.startDate && <span>{errors.startDate}</span>}
+                <label>
+                    <p>When does your event start?</p>
+                    <input
+                        type="datetime-local"
+                        name="startTime"
+                        value={startDate}
+                        onChange={(e) => {
+                            const dateTime = e.target.value.split("T");
+                            const newDate = dateTime[0].concat(
+                                " ",
+                                dateTime[1],
+                                ":00"
+                            );
+                            setStartDate(newDate);
+                        }}
+                    />
+                </label>
+                <br />
+                {errors.startDate && (
+                    <span className="error-msg">{errors.startDate}</span>
+                )}
 
-            <label>
-                <h2>When does your event end?</h2>
-                <input
-                    type="datetime-local"
-                    name="endTime"
-                    value={endDate}
-                    onChange={(e) => {
-                        const dateTime = e.target.value.split("T");
-                        const newDate = dateTime[0].concat(
-                            " ",
-                            dateTime[1],
-                            ":00"
-                        );
-                        setEndDate(newDate);
-                    }}
-                />
-            </label>
-            {errors.endDate && <span>{errors.endDate}</span>}
+                <label>
+                    <p>When does your event end?</p>
+                    <input
+                        type="datetime-local"
+                        name="endTime"
+                        value={endDate}
+                        onChange={(e) => {
+                            const dateTime = e.target.value.split("T");
+                            const newDate = dateTime[0].concat(
+                                " ",
+                                dateTime[1],
+                                ":00"
+                            );
+                            setEndDate(newDate);
+                        }}
+                    />
+                </label>
+                <br />
+                {errors.endDate && (
+                    <span className="error-msg">{errors.endDate}</span>
+                )}
+                <hr />
 
-            <label>
-                <h2>Please add in image url for your event below:</h2>
-                <input
-                    type="text"
-                    name="previewImage"
-                    placeholder="Image URL"
-                    value={image}
-                    onChange={(e) => setImage(e.target.value)}
-                />
-            </label>
-            {errors.image && <span>{errors.image}</span>}
+                <label>
+                    <p>Please add in image url for your event below:</p>
+                    <input
+                        type="text"
+                        name="previewImage"
+                        placeholder="Image URL"
+                        value={image}
+                        onChange={(e) => setImage(e.target.value)}
+                    />
+                </label>
+                <br />
+                {errors.image && (
+                    <span className="error-msg">{errors.image}</span>
+                )}
+                <hr />
 
-            <label>
-                <h2>Please describe your event:</h2>
-                <textarea
-                    type="text"
-                    cols="60"
-                    rows="8"
-                    name="desc"
-                    placeholder="Please include at least 30 characters"
-                    value={desc}
-                    onChange={(e) => setDesc(e.target.value)}
-                />
-            </label>
-            {errors.desc && <span>{errors.desc}</span>}
+                <label>
+                    <p>Please describe your event:</p>
+                    <textarea
+                        type="text"
+                        cols="60"
+                        rows="8"
+                        name="desc"
+                        placeholder="Please include at least 30 characters"
+                        value={desc}
+                        onChange={(e) => setDesc(e.target.value)}
+                    />
+                </label>
+                <br />
+                {errors.desc && (
+                    <span className="error-msg">{errors.desc}</span>
+                )}
 
-            <br />
-            <button type="submit">Create Event</button>
-        </form>
+                <br />
+                <button type="submit">Create Event</button>
+            </form>
+        </div>
     );
 }
