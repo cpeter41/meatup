@@ -1,4 +1,5 @@
 import { csrfFetch } from "./csrf.js";
+// import t
 
 const GROUPS_LIST = "groups/listGroups";
 const DISPLAY_GROUP = "groups/displayGroup";
@@ -29,8 +30,20 @@ export const getGroups = () => async (dispatch) => {
     const res = await csrfFetch("/api/groups");
 
     if (res.ok) {
-        const groups = await res.json();
-        dispatch(listGroups(groups.Groups));
+        let groups = await res.json();
+        groups.Groups &&
+            groups.Groups.forEach(async (group) => {
+                const newRes = await csrfFetch(
+                    `/api/groups/${group.id}/events`
+                );
+                if (newRes?.ok) {
+                    const data = await newRes.json();
+                    group.eventCount = data.Events.length;
+                }
+            });
+        setTimeout(() => {
+            dispatch(listGroups(groups.Groups));
+        }, groups?.Groups?.length * 200 ?? 1000);
     } else throw res;
 
     return res;
@@ -58,6 +71,10 @@ export const getGroupEvents = (groupId) => async (dispatch) => {
     return res;
 };
 
+// export const getGroupsEventCounts = (groups) => async (dispatch) => {
+
+// }
+
 const initialState = { Groups: null };
 
 function groupReducer(state = initialState, action) {
@@ -68,6 +85,11 @@ function groupReducer(state = initialState, action) {
             return { ...state, groupDetails: action.groupDetails };
         case GROUP_EVENTS:
             return { ...state, groupEvents: action.groupEvents };
+        // case GROUPS_EVENT_COUNT:
+        //     // state.Groups.forEach((group) => group.eventCount = );
+        //     console.log(state?.Groups);
+
+        //     return { ...state };
         default:
             return state;
     }

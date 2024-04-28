@@ -1,5 +1,4 @@
 import { NavLink } from "react-router-dom";
-// import { csrfFetch } from "../../store/csrf";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getGroups } from "../../store/group";
@@ -16,35 +15,59 @@ function GroupsList() {
 
     return (
         <div id="groups-div">
-            <div id="groups-list-nav-bar">
-                <NavLink to="/events">Events</NavLink>
-                <span className="current-page">Groups</span>
+            <div style={{ width: "800px" }}>
+                <div id="groups-list-nav-bar">
+                    <NavLink
+                        to="/events"
+                        style={{ textDecoration: "none", color: "grey" }}
+                    >
+                        Events
+                    </NavLink>
+                    <span
+                        className="current-page"
+                        style={{ textDecoration: "underline", color: "teal" }}
+                    >
+                        Groups
+                    </span>
+                </div>
+                <p style={{ color: "gray" }}>Groups in meatup</p>
+                <ul id="groups-list">
+                    {groupsObj &&
+                        groupsObj.Groups &&
+                        groupsObj.Groups.map((group) => {
+                            // console.log(group, group.eventCount);
+                            return (
+                                <li key={group.id}>
+                                    <NavLink
+                                        className="group-card"
+                                        to={`/groups/${group.id}`}
+                                    >
+                                        <img src={group.previewImage} />
+                                        <div className="group-info-card">
+                                            <h3>{group.name}</h3>
+                                            <span style={{ color: "gray" }}>
+                                                {group.city}, {group.state}
+                                            </span>
+                                            <p>{group.about}</p>
+                                            <span
+                                                style={{ color: "gray" }}
+                                                className="event-count"
+                                            >
+                                                {group.eventCount}{" "}
+                                                {group.eventCount === 1
+                                                    ? "event · "
+                                                    : "events · "}
+                                                {group.private
+                                                    ? "Private"
+                                                    : "Public"}
+                                            </span>
+                                        </div>
+                                    </NavLink>
+                                </li>
+                            );
+                        })}
+                </ul>
             </div>
-            <p>Groups in meatup</p>
-            <ul id="groups-list">
-                {groupsObj &&
-                    groupsObj.Groups &&
-                    groupsObj.Groups.map((group) => {
-                        return (
-                            <li className="group-card" key={group.id}>
-                                <NavLink to={`/groups/${group.id}`}>
-                                    <div className="placeholder-img"></div>
-                                    <div className="group-info-card">
-                                        <h3>{group.name}</h3>
-                                        <span>{group.city}, {group.state}</span>
-                                        <p>{group.about}</p>
-                                        <span>
-                                            # events ·{" "}
-                                            {group.private
-                                                ? "Private"
-                                                : "Public"}
-                                        </span>
-                                    </div>
-                                </NavLink>
-                            </li>
-                        );
-                    })}
-            </ul>
         </div>
     );
 }

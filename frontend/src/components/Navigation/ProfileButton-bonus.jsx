@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import * as sessionActions from "../../store/session";
 import { useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import "./Navigation.css";
 
 function ProfileButton({ user }) {
@@ -38,9 +39,7 @@ function ProfileButton({ user }) {
         navigate("/");
     };
 
-    const ulClassName =
-        "profile-dropdown" +
-        (showMenu ? "" : " hidden");
+    const ulClassName = "profile-dropdown" + (showMenu ? "" : " hidden");
 
     return (
         <>
@@ -58,8 +57,9 @@ function ProfileButton({ user }) {
             <ul className={ulClassName} ref={ulRef}>
                 <>
                     <li className="profile-li">Hello, {user.firstName}</li>
-                    <li className="profile-li" id="dropdown-email">
-                        {user.email}
+                    <li className="profile-li bottom-border">{user.email}</li>
+                    <li className="profile-li bottom-border">
+                        <NavLink className="nav-link" to="/groups">View Groups</NavLink>
                     </li>
                     <li id="logout-li">
                         <button onClick={logout} id="logout">

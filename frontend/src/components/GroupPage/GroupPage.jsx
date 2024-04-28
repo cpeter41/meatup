@@ -42,7 +42,6 @@ function GroupPage() {
             return [newDate, dateTimeParts[1]].join("");
         }
 
-        
         if (events) {
             const upcomingEvents = [];
             const pastEvents = [];
@@ -55,8 +54,6 @@ function GroupPage() {
             setUpcoming(upcomingEvents);
             setPast(pastEvents);
         }
-
-        
     }, [events]);
 
     let previewImage;
@@ -83,8 +80,11 @@ function GroupPage() {
                         <h1>{group && group.name}</h1>
                         <span>{group && group.city}</span>
                         <span>
-                            # events ·{" "}
-                            {group && group.private ? "Private" : "Public"}
+                            {events?.Events.length}{" "}
+                            {events?.Events.length === 1
+                                ? " event "
+                                : " events "}
+                            · {group && group.private ? "Private" : "Public"}
                         </span>
                         <span>
                             Organized By {group && group.Organizer.firstName}{" "}
