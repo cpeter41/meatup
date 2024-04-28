@@ -77,7 +77,7 @@ const events = [
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris facilisis congue odio, id tempor nisl gravida ut. Vestibulum eget purus elit.",
         type: "In person",
         capacity: 30,
-        price: 5,
+        price: 0,
         startDate: "2024-11-11 12:30:00",
         endDate: "2024-11-11 17:00:00",
     },

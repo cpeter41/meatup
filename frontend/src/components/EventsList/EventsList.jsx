@@ -31,12 +31,6 @@ export default function EventsList() {
         const pastEvents = [];
         let lastUpcomingDate, lastPastDate;
         events.forEach((event) => {
-            const item = (
-                <>
-                    <hr />
-                    <EventItem key={event.id} event={event} list />
-                </>
-            );
             // sort
             if (event.startDate > newFormattedDate()) {
                 if (event.startDate > lastUpcomingDate) {
