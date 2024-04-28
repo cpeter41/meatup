@@ -36,9 +36,12 @@ function GroupsList() {
                         groupsObj.Groups &&
                         groupsObj.Groups.map((group) => {
                             return (
-                                <>
+                                <div key={group.id}>
                                     <hr />
-                                    <li key={group.id} style={{borderRadius: "16px"}}>
+                                    <li
+                                        
+                                        style={{ borderRadius: "16px" }}
+                                    >
                                         <NavLink
                                             className="group-card"
                                             to={`/groups/${group.id}`}
@@ -65,7 +68,7 @@ function GroupsList() {
                                             </div>
                                         </NavLink>
                                     </li>
-                                </>
+                                </div>
                             );
                         })}
                 </ul>

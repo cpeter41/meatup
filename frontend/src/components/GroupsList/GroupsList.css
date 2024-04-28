@@ -10,11 +10,11 @@
     padding: 0;
 }
 
-#groups-list > li:hover {
+#groups-list li:hover {
     background-color: rgb(246, 246, 246);
 }
 
-#groups-list > hr {
+#groups-list hr {
     border: 1px solid gray;
     margin: 0;
 }

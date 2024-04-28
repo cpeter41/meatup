@@ -57,10 +57,10 @@ export default function EventsList() {
         // convert to react components
         const upcomingItems = upcomingEvents.map((event) => {
             return (
-                <>
+                <div key={event.id}>
                     <hr />
-                    <EventItem key={event.id} event={event} list />
-                </>
+                    <EventItem event={event} list />
+                </div>
             );
         });
 
@@ -72,10 +72,10 @@ export default function EventsList() {
         // convert to react components
         const pastItems = pastEvents.map((event) => {
             return (
-                <>
+                <div key={event.id}>
                     <hr />
-                    <EventItem key={event.id} event={event} list />
-                </>
+                    <EventItem event={event} list />
+                </div>
             );
         });
 
@@ -104,12 +104,6 @@ export default function EventsList() {
                 <p style={{ color: "gray" }}>Events in meatup</p>
                 <ul id="groups-list">
                     {eventsObj?.Events && sortMap(eventsObj.Events)}
-                    {/* eventsObj.Events.map((event) => (
-                            <>
-                                <hr />
-                                <EventItem key={event.id} event={event} list />
-                            </>
-                        ))} */}
                 </ul>
             </div>
         </div>

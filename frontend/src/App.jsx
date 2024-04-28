@@ -11,6 +11,9 @@ import EventPage from "./components/EventPage";
 import EventForm from "./components/EventForm";
 import * as sessionActions from "./store/session";
 import { Modal } from "./context/Modal";
+import { HelmetProvider, Helmet } from "react-helmet-async";
+
+const helmetContext = {};
 
 function Layout() {
     const dispatch = useDispatch();
@@ -76,7 +79,14 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-    return <RouterProvider router={router} />;
+    return (
+        <HelmetProvider context={helmetContext}>
+            <Helmet>
+                <title>meatup</title>
+            </Helmet>
+            <RouterProvider router={router} />;
+        </HelmetProvider>
+    );
 }
 
 export default App;
