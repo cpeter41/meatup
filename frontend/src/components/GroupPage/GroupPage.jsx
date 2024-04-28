@@ -169,7 +169,6 @@ function GroupPage() {
                     <h2>What we&apos;re about</h2>
                     <p>{group && group.about}</p>
                 </div>
-                {/* TODO: SORT EVENTS BY RECENCY */}
                 <div id="upcoming-events">
                     <h2>
                         Upcoming Events {upcoming && `(${upcoming.length})`}

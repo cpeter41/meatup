@@ -69,7 +69,6 @@ export default function EventPage() {
                                 style={{
                                     display: "flex",
                                     alignItems: "center",
-                                    // margin: "10.5px 0"
                                 }}
                             >
                                 <i className="fa-regular fa-clock fa-2xl"></i>
@@ -134,7 +133,7 @@ export default function EventPage() {
                         </div>
                     </div>
                 </div>
-                <div>
+                <div style={{ maxWidth: "1014px" }}>
                     <h2 style={{ marginTop: "0" }}>Details</h2>
                     <p>{event && event.description}</p>
                 </div>

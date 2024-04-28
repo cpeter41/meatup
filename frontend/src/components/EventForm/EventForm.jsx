@@ -22,16 +22,19 @@ export default function EventForm() {
     const [desc, setDesc] = useState("");
     const [isValidId, setIsValidId] = useState(false);
     const [errors, setErrors] = useState({});
+    
+    const group = useSelector((state) => state.groups.groupDetails);
+    const userId = useSelector((state) => state.session?.user?.id);
 
     useEffect(() => {
         if (isNaN(groupId)) setIsValidId(false);
         else setIsValidId(true);
 
         if (isValidId) dispatch(getGroupDetails(groupId));
+
+        if (userId !== group.organizerId) navigate(`/groups/${groupId}`);
     }, [dispatch, groupId, isValidId]);
 
-    const group = useSelector((state) => state.groups.groupDetails);
-    // const userId = useSelector((state) => state.session.user.id);
 
     async function onSubmit(e) {
         e.preventDefault();

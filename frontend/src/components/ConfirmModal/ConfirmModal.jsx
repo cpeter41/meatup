@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useModal } from "../../context/Modal";
 import { csrfFetch } from "../../store/csrf";
+import "./ConfirmModal.css";
 
 export default function ConfirmModal({ method, type, id }) {
     const { closeModal } = useModal();
@@ -20,15 +21,15 @@ export default function ConfirmModal({ method, type, id }) {
     };
 
     return (
-        <>
+        <div id="confirm-modal">
             <h1>Confirm Delete</h1>
             <p>Are you sure you want to remove this {type}?</p>
-            <button onClick={confirmDelete}>{`Yes (Delete ${
+            <button id="modal-confirm-button" onClick={confirmDelete}>{`Yes (Delete ${
                 type === "group" ? "Group" : "Event"
             })`}</button>
-            <button onClick={closeModal}>{`No (Keep ${
+            <button id="modal-cancel-button" onClick={closeModal}>{`No (Keep ${
                 type === "group" ? "Group" : "Event"
             })`}</button>
-        </>
+        </div>
     );
 }

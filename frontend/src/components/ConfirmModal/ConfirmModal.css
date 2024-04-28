@@ -1,0 +1,39 @@
+#confirm-modal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 400px;
+}
+
+#confirm-modal h1 {
+    margin-bottom: 0px;
+}
+
+#modal-confirm-button, #modal-cancel-button {
+    all: unset;
+    color: white;
+    border-radius: 10px;
+    padding: 10px 20px;
+    margin: 4px 0;
+    width: 200px;
+    text-align: center;
+}
+
+#modal-confirm-button {
+    background-color: rgb(229, 91, 72);
+}
+
+#modal-confirm-button:hover {
+    background-color: rgb(242, 97, 78);
+    cursor: pointer;
+}
+
+#modal-cancel-button {
+    background-color: darkgray;
+    margin-bottom: 20px;
+}
+
+#modal-cancel-button:hover {
+    background-color: rgb(180, 180, 180);
+    cursor: pointer;
+}

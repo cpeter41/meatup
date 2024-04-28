@@ -9,6 +9,15 @@ if (process.env.NODE_ENV === "production") {
 
 const groups = [
     {
+        organizerId: 1,
+        name: "Filet Friends",
+        about: "This is the demo user's Group. Click here to try updating the group! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris facilisis congue odio, id tempor nisl gravida ut.",
+        type: "In person",
+        private: false,
+        city: "Anaheim",
+        state: "CA",
+    },
+    {
         organizerId: 2,
         name: "Ribeye Fanclub",
         about: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris facilisis congue odio, id tempor nisl gravida ut. Vestibulum eget purus elit.",
@@ -24,15 +33,6 @@ const groups = [
         type: "In person",
         private: false,
         city: "Los Angeles",
-        state: "CA",
-    },
-    {
-        organizerId: 1,
-        name: "Filet Fiends",
-        about: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris facilisis congue odio, id tempor nisl gravida ut.",
-        type: "In person",
-        private: false,
-        city: "Anaheim",
         state: "CA",
     },
     {
@@ -77,10 +77,6 @@ module.exports = {
          * Example:
          * await queryInterface.bulkDelete('People', null, {});
          */
-        await queryInterface.bulkDelete(
-            "Groups",
-            null,
-            options
-        );
+        await queryInterface.bulkDelete("Groups", null, options);
     },
 };
