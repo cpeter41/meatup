@@ -14,8 +14,6 @@ export default function EventsList() {
 
     const eventsObj = useSelector((state) => state.events);
 
-    // NOTE: may need to call event details to get description for each item
-
     return (
         <div>
             <div>

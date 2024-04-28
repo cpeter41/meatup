@@ -521,6 +521,7 @@ router.get("/", async (req, res, next) => {
             "type",
             "startDate",
             "endDate",
+            "description",
         ],
         include: [
             {
@@ -592,6 +593,7 @@ router.get("/", async (req, res, next) => {
         event.dataValues.endDate = formatDate(event.dataValues.endDate);
     }
 
+    console.log(events);
     res.json({
         Events: events,
         page: parseInt(page),

@@ -1,0 +1,47 @@
+.event-link {
+    text-decoration: none;
+}
+
+.event-link > p {
+    margin: 0 20px 0 20px;
+    padding-bottom: 10px;
+    color: black;
+    font-size: smaller;
+}
+
+.event-top-half {
+    display: flex;
+    padding: 16px;
+}
+
+.event-card {
+    border-radius: 16px;
+    background-color: white;
+    width: 516px;
+    min-height: 200px;
+    max-height: 300px;
+    margin: 10px 0;
+}
+
+.event-preview-image {
+    width: 30%;
+    height: 120px;
+    object-fit: cover;
+    border: 1px solid black;
+}
+
+.event-card-title {
+    margin: 0 16px;
+    height: 121.6px;
+    flex-grow: 1;
+}
+
+.event-card-title > h3 {
+    color: rgb(229, 91, 72);
+    font-size: medium;
+}
+
+.event-card-title > h3 {
+    color: rgb(229, 91, 72);
+    font-size: medium;
+}

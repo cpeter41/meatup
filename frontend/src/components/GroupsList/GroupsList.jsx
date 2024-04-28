@@ -35,35 +35,37 @@ function GroupsList() {
                     {groupsObj &&
                         groupsObj.Groups &&
                         groupsObj.Groups.map((group) => {
-                            // console.log(group, group.eventCount);
                             return (
-                                <li key={group.id}>
-                                    <NavLink
-                                        className="group-card"
-                                        to={`/groups/${group.id}`}
-                                    >
-                                        <img src={group.previewImage} />
-                                        <div className="group-info-card">
-                                            <h3>{group.name}</h3>
-                                            <span style={{ color: "gray" }}>
-                                                {group.city}, {group.state}
-                                            </span>
-                                            <p>{group.about}</p>
-                                            <span
-                                                style={{ color: "gray" }}
-                                                className="event-count"
-                                            >
-                                                {group.eventCount}{" "}
-                                                {group.eventCount === 1
-                                                    ? "event · "
-                                                    : "events · "}
-                                                {group.private
-                                                    ? "Private"
-                                                    : "Public"}
-                                            </span>
-                                        </div>
-                                    </NavLink>
-                                </li>
+                                <>
+                                    <hr />
+                                    <li key={group.id}>
+                                        <NavLink
+                                            className="group-card"
+                                            to={`/groups/${group.id}`}
+                                        >
+                                            <img src={group.previewImage} />
+                                            <div className="group-info-card">
+                                                <h3>{group.name}</h3>
+                                                <span style={{ color: "gray" }}>
+                                                    {group.city}, {group.state}
+                                                </span>
+                                                <p>{group.about}</p>
+                                                <span
+                                                    style={{ color: "gray" }}
+                                                    className="event-count"
+                                                >
+                                                    {group.eventCount}{" "}
+                                                    {group.eventCount === 1
+                                                        ? "event · "
+                                                        : "events · "}
+                                                    {group.private
+                                                        ? "Private"
+                                                        : "Public"}
+                                                </span>
+                                            </div>
+                                        </NavLink>
+                                    </li>
+                                </>
                             );
                         })}
                 </ul>

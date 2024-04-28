@@ -437,6 +437,7 @@ router.get("/:groupId/events", async (req, res, next) => {
             "type",
             "startDate",
             "endDate",
+            "description",
         ],
         include: [
             {

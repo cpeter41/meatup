@@ -66,61 +66,75 @@ function GroupPage() {
 
     return isValidId ? (
         <div id="group-container">
-            <section id="group-preview">
-                <div id="group-image-box">
-                    <div>
-                        <span>
-                            &lt; <NavLink to="/groups">Groups</NavLink>
-                        </span>
-                    </div>
-                    <img src={previewImage && previewImage.url} />
-                </div>
-                <div id="group-preview-and-button">
-                    <div id="group-preview-info">
-                        <h1>{group && group.name}</h1>
-                        <span>{group && group.city}</span>
-                        <span>
-                            {events?.Events.length}{" "}
-                            {events?.Events.length === 1
-                                ? " event "
-                                : " events "}
-                            · {group && group.private ? "Private" : "Public"}
-                        </span>
-                        <span>
-                            Organized By {group && group.Organizer.firstName}{" "}
-                            {group && group.Organizer.lastName}
-                        </span>
-                    </div>
-                    {group && user && user.id === group.organizerId ? (
-                        <div>
-                            <button
-                                onClick={() =>
-                                    navigate(`/groups/${groupId}/events/new`)
-                                }
-                            >
-                                Create event
-                            </button>
-                            <button
-                                onClick={() =>
-                                    navigate(`/groups/${groupId}/edit`)
-                                }
-                            >
-                                Update
-                            </button>
-                            <OpenModalMenuItem
-                                itemText="Delete"
-                                modalComponent={
-                                    <ConfirmModal
-                                        type="group"
-                                        method="DELETE"
-                                        id={groupId}
-                                    />
-                                }
-                            />
+            <section id="preview-background">
+                <div id="group-preview">
+                    <div id="group-image-box">
+                        <div style={{ margin: "4px 0" }}>
+                            <span>
+                                &lt;{" "}
+                                <NavLink className="nav-link" to="/groups">
+                                    Groups
+                                </NavLink>
+                            </span>
                         </div>
-                    ) : (
-                        <button id="join-group-button">Join this group</button>
-                    )}
+                        <img src={previewImage && previewImage.url} />
+                    </div>
+                    <div id="group-preview-and-button">
+                        <div id="group-preview-info">
+                            <h1>{group && group.name}</h1>
+                            <span>{group && group.city}</span>
+                            <span>
+                                {events?.Events.length}{" "}
+                                {events?.Events.length === 1
+                                    ? " event "
+                                    : " events "}
+                                ·{" "}
+                                {group && group.private ? "Private" : "Public"}
+                            </span>
+                            <span>
+                                Organized By{" "}
+                                {group && group.Organizer.firstName}{" "}
+                                {group && group.Organizer.lastName}
+                            </span>
+                        </div>
+                        {group && user && user.id === group.organizerId ? (
+                            <div className="manage-buttons">
+                                <button
+                                    onClick={() =>
+                                        navigate(
+                                            `/groups/${groupId}/events/new`
+                                        )
+                                    }
+                                >
+                                    Create event
+                                </button>
+                                <button
+                                    onClick={() =>
+                                        navigate(`/groups/${groupId}/edit`)
+                                    }
+                                >
+                                    Update
+                                </button>
+                                <OpenModalMenuItem
+                                    itemText="Delete"
+                                    modalComponent={
+                                        <ConfirmModal
+                                            type="group"
+                                            method="DELETE"
+                                            id={groupId}
+                                        />
+                                    }
+                                />
+                            </div>
+                        ) : (
+                            <button
+                                id="join-group-button"
+                                onClick={() => alert("Feature coming soon!")}
+                            >
+                                Join this group
+                            </button>
+                        )}
+                    </div>
                 </div>
             </section>
             <section id="group-details">
@@ -137,12 +151,20 @@ function GroupPage() {
                 </div>
                 <div id="upcoming-events">
                     <h2>Upcoming Events</h2>
-                    {events && upcoming}
+                    <ul style={{ listStyleType: "none", padding: 0 }}>
+                        {events && upcoming}
+                    </ul>
                 </div>
-                <div id="past-events">
-                    <h2>Past Events</h2>
-                    {events && past}
-                </div>
+                {events && past.length ? (
+                    <div id="past-events">
+                        <h2>Past Events</h2>
+                        <ul style={{ listStyleType: "none", padding: 0 }}>
+                            {past}
+                        </ul>
+                    </div>
+                ) : (
+                    ""
+                )}
             </section>
         </div>
     ) : (

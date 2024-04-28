@@ -10,6 +10,15 @@
     padding: 0;
 }
 
+#groups-list > li:hover {
+    background-color: rgb(246, 246, 246);
+}
+
+#groups-list > hr {
+    border: 1px solid gray;
+    margin: 0;
+}
+
 .group-card {
     margin: 10px 0;
     height: 160px;
@@ -19,7 +28,7 @@
     text-decoration: none;
     color: black;
     padding-bottom: 12px;
-    border-bottom: 2px solid gray;;
+    padding-top: 12px;
 }
 
 .group-card img {
@@ -28,6 +37,10 @@
     min-height: 160px;
     min-width: 200px;
     object-fit: cover;
+}
+
+#groups-list-nav-bar {
+    margin-top: 30px;
 }
 
 #groups-list-nav-bar > * {
@@ -44,5 +57,5 @@
 
 .group-info-card h3 {
     margin: 0;
-    color: rgb(242, 97, 78)
+    color: rgb(242, 97, 78);
 }

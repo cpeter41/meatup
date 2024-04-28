@@ -1,12 +1,24 @@
 #group-container {
     display: flex;
     flex-direction: column;
-    margin: 0 10%;
+    align-items: center;
+    /* margin: 0 10%; */
+    background-color: rgb(228, 228, 228);
+}
+
+#preview-background {
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
 }
 
 #group-preview {
     display: flex;
     flex-direction: row;
+    width: 824px;
+    padding-bottom: 16px;
 }
 
 #group-image-box {
@@ -19,8 +31,6 @@
     display: block;
     max-width: 600px;
     max-height: 400px;
-    width: auto;
-    height: auto;
     margin-right: 20px;
 }
 
@@ -36,10 +46,48 @@
     flex-direction: column;
 }
 
+#group-preview-info > span {
+    color: gray;
+    margin: 6px 0;
+}
+
+#group-preview-info > h1 {
+    margin: 42px 0 4px 0;
+    margin-top: 42px;
+    color: rgb(229, 91, 72);
+}
+
 #join-group-button {
-    width: 150px;
+    all: unset;
+    width: 164px;
+    height: 32px;
+    background-color: rgb(229, 91, 72);
+    text-align: center;
+    border-radius: 10px;
+    color: white;
+}
+
+#join-group-button:hover {
+    background-color: rgb(242, 97, 78);
+    cursor: pointer;
 }
 
 #group-details {
+    max-width: 824px;
     width: 100%;
+}
+
+.manage-buttons > * {
+    all: unset;
+    background-color: rgb(229, 91, 72);
+    color: white;
+    font-size: small;
+    margin: 0 4px;
+    padding: 6px 10px;
+    border-radius: 6px;
+}
+
+.manage-buttons > *:hover {
+    background-color: rgb(242, 97, 78);
+    cursor: pointer;
 }
