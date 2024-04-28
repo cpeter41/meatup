@@ -53,7 +53,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "/groups/:groupId/edit",
-                element: <GroupForm update={true} />,
+                element: <GroupForm update />,
             },
             {
                 path: "/events",

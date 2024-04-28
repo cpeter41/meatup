@@ -55,11 +55,10 @@ function GroupForm({ update }) {
 
         setErrors(error); // 'sync' current scoped error to controlled var
         if (!Object.keys(error).length) {
-            // skip redux, send directly
+            console.log("update: ", update);
             const method = update ? "PUT" : "POST";
 
             const res = await csrfFetch(
-                // TODO: GET NEW GROUP'S ID
                 `/api/groups${update ? `/${group.id}` : ""}`,
                 {
                     method,
@@ -77,11 +76,17 @@ function GroupForm({ update }) {
             const newGroup = await res.json();
 
             if (update) {
-                const prevImg = newGroup.GroupImages.find((img) => img.preview);
-                if (prevImg)
-                    await csrfFetch(`/api/group-images/${prevImg.id}`, {
-                        method: "DELETE",
-                    });
+                const getRes = await csrfFetch(`/api/groups/${newGroup.id}`);
+                const getGroup = await getRes.json();
+                if (getGroup.id !== group.id) {
+                    const prevImg = getGroup?.GroupImages.find(
+                        (img) => img.preview
+                    );
+                    if (prevImg)
+                        await csrfFetch(`/api/group-images/${prevImg.id}`, {
+                            method: "DELETE",
+                        });
+                }
             }
 
             await csrfFetch(`/api/groups/${newGroup.id}/images`, {
