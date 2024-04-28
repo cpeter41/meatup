@@ -40,8 +40,7 @@ function ProfileButton({ user }) {
 
     const ulClassName =
         "profile-dropdown" +
-        (showMenu ? "" : " hidden") +
-        " half-radius-border";
+        (showMenu ? "" : " hidden");
 
     return (
         <>

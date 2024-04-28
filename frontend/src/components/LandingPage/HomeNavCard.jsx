@@ -7,7 +7,7 @@ function HomeNavCard({ type }) {
     switch (type) {
         case "see-all-groups":
             return (
-                <div className="home-nav-card" id="see-all-groups">
+                <div className="home-nav-card">
                     <img
                         src="https://news.utexas.edu/wp-content/uploads/2019/06/Mixed-Race-Hands.jpg"
                         alt="handshake"
@@ -22,7 +22,7 @@ function HomeNavCard({ type }) {
             );
         case "find-an-event":
             return (
-                <div className="home-nav-card" id="find-an-event">
+                <div className="home-nav-card">
                     <img
                         src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/A_meat_stand_in_La_Boqueria.jpg/640px-A_meat_stand_in_La_Boqueria.jpg"
                         alt="a meat stand"
@@ -37,7 +37,7 @@ function HomeNavCard({ type }) {
             );
         case "create-group":
             return (
-                <div className="home-nav-card" id="create-group">
+                <div className="home-nav-card">
                     <img
                         src="https://natashaskitchen.com/wp-content/uploads/2017/04/Homemade-Sausage-2-500x500.jpg"
                         alt="sausage"

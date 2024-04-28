@@ -18,6 +18,10 @@ html {
     text-decoration: none;
 }
 
-.half-radius-border {
-    border-radius: 0 8px;
+.nav-link:hover {
+    color: rgb(4, 152, 152);
+}
+
+img {
+    border-radius: 16px;
 }

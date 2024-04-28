@@ -4,6 +4,7 @@
     top: 41px;
     list-style-type: none;
     border: 2px solid black;
+    border-radius: 6px;
     background-color: white;
     padding: 0;
 }
@@ -22,13 +23,15 @@
 
 #logout {
     all: unset;
-    width: 100%;
+    width: 90%;
     padding-left: 10px;
 }
 
 #logout-li:hover {
     background-color: rgb(229, 91, 72);
-    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    cursor: pointer;
 }
 
 .hidden {
@@ -41,8 +44,21 @@
     justify-content: space-between;
 }
 
-.nav-user > * {
-    margin: 0px 10px;
+#nav-logged-out > * {
+    margin: 0 10px;
+}
+
+#nav-logged-in > * {
+    all: unset;
+    border-radius: 8px;
+    padding: 4px 8px;
+    font-weight: 480;
+    color: gray;
+}
+
+#nav-logged-in > *:hover {
+    color: rgb(229, 91, 72);
+    cursor: pointer;
 }
 
 #profile-button {

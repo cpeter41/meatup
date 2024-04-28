@@ -15,14 +15,14 @@ function Navigation({ isLoaded }) {
                 <img src="../../../images/meatup_logo.png" alt="logo" />
             </NavLink>
             {isLoaded && sessionUser ? (
-                <div className="nav-user">
+                <div id="nav-logged-out">
                     <NavLink className="nav-link" to="/groups/new">
                         Start a new group
                     </NavLink>
                     <ProfileButton user={sessionUser} />
                 </div>
             ) : (
-                <div className="nav-user">
+                <div id="nav-logged-in">
                     <OpenModalMenuItem
                         itemText="Log In"
                         modalComponent={<LoginFormModal />}

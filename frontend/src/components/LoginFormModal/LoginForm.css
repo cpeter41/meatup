@@ -9,6 +9,7 @@
 #login-form > p {
     text-align: center;
     color: rgb(229, 91, 72);
+    margin: 4px 0;
 }
 
 #login-form > * {
@@ -28,9 +29,12 @@
 #submit {
     margin: 10px 0;
     height: 36px;
-    border: 2px solid gray;
+    border: none;
     border-radius: 8px;
     background-color: rgb(229, 91, 72);
+    font-family: "Rubik", sans-serif;
+    color: white;
+    font-weight: 500;
 }
 
 #submit:hover {
@@ -38,7 +42,7 @@
 }
 
 #submit:disabled {
-    background-color: white;
+    background-color: rgba(229, 90, 72, 0.5);
 }
 
 #demo-submit {

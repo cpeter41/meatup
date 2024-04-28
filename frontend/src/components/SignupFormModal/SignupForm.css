@@ -1,0 +1,15 @@
+#signup-container > h1 {
+    margin-top: 12px;
+}
+
+#signup-form {
+    width: 400px;
+}
+
+#signup-form > label {
+    display: none;
+}
+
+#signup-form > input {
+    margin: 5px 0;
+}

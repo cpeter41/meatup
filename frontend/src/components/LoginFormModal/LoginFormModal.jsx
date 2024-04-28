@@ -39,8 +39,6 @@ function LoginFormModal() {
     const logInDemo = () => {
         return dispatch(sessionActions.login(demoCredentials))
         .then(closeModal)
-        // setCredential(demoCredentials.credential);
-        // setPassword(demoCredentials.password);
     };
 
     return (

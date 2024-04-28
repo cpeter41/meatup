@@ -1,6 +1,8 @@
 import HomeNavCard from "./HomeNavCard";
 import IntroCard from "./IntroCard";
 import DescriptionBox from "./DescriptionBox";
+import OpenModalMenuItem from "../Navigation/OpenModalMenuItem";
+import SignupFormModal from "../SignupFormModal";
 import "./LandingPage.css";
 
 function LandingPage() {
@@ -13,8 +15,11 @@ function LandingPage() {
                 <HomeNavCard type="find-an-event" />
                 <HomeNavCard type="create-group" />
             </div>
-            <div>
-                <button id="join-meatup">Join meatup</button>
+            <div id="join-meatup">
+                <OpenModalMenuItem
+                    itemText="Join meatup"
+                    modalComponent={<SignupFormModal />}
+                />
             </div>
         </div>
     );

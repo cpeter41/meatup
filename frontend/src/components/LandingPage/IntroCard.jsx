@@ -1,3 +1,5 @@
+import "./LandingPage.css";
+
 function IntroCard() {
     return (
         <div id="intro-card">
@@ -15,12 +17,10 @@ function IntroCard() {
                     imperdiet feugiat.
                 </p>
             </div>
-            <div id="home-image">
-                <img
-                    src="https://media.cnn.com/api/v1/images/stellar/prod/230626190944-fourth-of-july-cookout-stock.jpg?c=original"
-                    alt="outdoor bbq"
-                />
-            </div>
+            <img
+                src="https://media.cnn.com/api/v1/images/stellar/prod/230626190944-fourth-of-july-cookout-stock.jpg?c=original"
+                alt="outdoor bbq"
+            />
         </div>
     );
 }
