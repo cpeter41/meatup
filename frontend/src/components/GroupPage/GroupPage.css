@@ -79,15 +79,23 @@
 
 .manage-buttons > * {
     all: unset;
-    background-color: rgb(229, 91, 72);
+    background-color: darkgray;
     color: white;
     font-size: small;
     margin: 0 4px;
     padding: 6px 10px;
-    border-radius: 6px;
+    border-radius: 8px;
 }
 
 .manage-buttons > *:hover {
-    background-color: rgb(242, 97, 78);
+    background-color: rgb(180, 180, 180);
     cursor: pointer;
+}
+
+.red-button {
+    background-color: rgb(229, 91, 72);
+}
+
+.red-button:hover {
+    background-color: rgb(242, 97, 78);
 }

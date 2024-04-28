@@ -43,7 +43,7 @@ export default function EventPage() {
                 </span>
                 <h1>{event && event.name}</h1>
                 <span>
-                    Hosted by{" "}
+                    Hosted by:{" "}
                     {group &&
                         [
                             group.Organizer.firstName,

@@ -61,6 +61,9 @@ function ProfileButton({ user }) {
                     <li className="profile-li bottom-border">
                         <NavLink className="nav-link" to="/groups">View Groups</NavLink>
                     </li>
+                    <li className="profile-li bottom-border">
+                        <NavLink className="nav-link" to="/events">View Events</NavLink>
+                    </li>
                     <li id="logout-li">
                         <button onClick={logout} id="logout">
                             Log Out

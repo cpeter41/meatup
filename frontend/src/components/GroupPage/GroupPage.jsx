@@ -82,7 +82,9 @@ function GroupPage() {
                     <div id="group-preview-and-button">
                         <div id="group-preview-info">
                             <h1>{group && group.name}</h1>
-                            <span>{group && group.city}</span>
+                            <span>
+                                {group?.city}, {group?.state}
+                            </span>
                             <span>
                                 {events?.Events.length}{" "}
                                 {events?.Events.length === 1
@@ -92,14 +94,14 @@ function GroupPage() {
                                 {group && group.private ? "Private" : "Public"}
                             </span>
                             <span>
-                                Organized By{" "}
+                                Organized By:{" "}
                                 {group && group.Organizer.firstName}{" "}
                                 {group && group.Organizer.lastName}
                             </span>
                         </div>
                         {group && user && user.id === group.organizerId ? (
                             <div className="manage-buttons">
-                                <button
+                                <button className="red-button"
                                     onClick={() =>
                                         navigate(
                                             `/groups/${groupId}/events/new`
@@ -127,12 +129,16 @@ function GroupPage() {
                                 />
                             </div>
                         ) : (
-                            <button
-                                id="join-group-button"
-                                onClick={() => alert("Feature coming soon!")}
-                            >
-                                Join this group
-                            </button>
+                            user && (
+                                <button
+                                    id="join-group-button"
+                                    onClick={() =>
+                                        alert("Feature coming soon!")
+                                    }
+                                >
+                                    Join this group
+                                </button>
+                            )
                         )}
                     </div>
                 </div>
@@ -149,22 +155,21 @@ function GroupPage() {
                     <h2>What we&apos;re about</h2>
                     <p>{group && group.about}</p>
                 </div>
+                {/* TODO: SORT EVENTS BY RECENCY */}
                 <div id="upcoming-events">
-                    <h2>Upcoming Events</h2>
+                    <h2>Upcoming Events {upcoming && `(${upcoming.length})`}</h2>
                     <ul style={{ listStyleType: "none", padding: 0 }}>
                         {events && upcoming}
                     </ul>
                 </div>
                 {events && past.length ? (
                     <div id="past-events">
-                        <h2>Past Events</h2>
+                        <h2>Past Events {past && `(${past.length})`}</h2>
                         <ul style={{ listStyleType: "none", padding: 0 }}>
                             {past}
                         </ul>
                     </div>
-                ) : (
-                    ""
-                )}
+                ) : null}
             </section>
         </div>
     ) : (

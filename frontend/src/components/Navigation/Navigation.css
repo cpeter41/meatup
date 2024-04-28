@@ -1,7 +1,7 @@
 .profile-dropdown {
     position: absolute;
     right: 8px;
-    top: 41px;
+    top: 46px;
     list-style-type: none;
     border: 2px solid black;
     border-radius: 6px;
@@ -10,7 +10,7 @@
 }
 
 .profile-dropdown > li {
-    padding: 0 10px;
+    padding: 1px 10px;
 }
 
 .bottom-border {
