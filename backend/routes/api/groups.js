@@ -37,10 +37,8 @@ const formatDate = (date) => {
     let dateTime;
     if (date instanceof Date) dateTime = date.toISOString();
     else dateTime = date;
-    // else return date
 
     dateTime = dateTime.split("T");
-    // console.log("DATETIME", dateTime);
     dateTime[1] = dateTime[1].slice(0, 8);
     return dateTime.join(" ");
 };

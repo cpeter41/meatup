@@ -55,7 +55,6 @@ function GroupForm({ update }) {
 
         setErrors(error); // 'sync' current scoped error to controlled var
         if (!Object.keys(error).length) {
-            console.log("update: ", update);
             const method = update ? "PUT" : "POST";
 
             const res = await csrfFetch(

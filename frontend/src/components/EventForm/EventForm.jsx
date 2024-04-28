@@ -52,16 +52,6 @@ export default function EventForm() {
         setErrors(error);
         if (!Object.keys(error).length) {
             // skip redux, send directly
-            console.log({
-                name,
-                type,
-                price,
-                description: desc,
-                startDate,
-                endDate,
-                venueId: DEFAULT_VENUE_ID,
-                capacity: DEFAULT_CAPACITY,
-            });
 
             const res = await csrfFetch(`/api/groups/${groupId}/events`, {
                 method: "POST",

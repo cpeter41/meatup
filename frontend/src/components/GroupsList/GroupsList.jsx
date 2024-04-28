@@ -38,7 +38,7 @@ function GroupsList() {
                             return (
                                 <>
                                     <hr />
-                                    <li key={group.id}>
+                                    <li key={group.id} style={{borderRadius: "16px"}}>
                                         <NavLink
                                             className="group-card"
                                             to={`/groups/${group.id}`}

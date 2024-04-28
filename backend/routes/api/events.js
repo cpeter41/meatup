@@ -64,7 +64,6 @@ router.post("/:eventId/images", requireAuth, async (req, res, next) => {
     const { url, preview } = req.body;
 
     foundEvent = foundEvent.toJSON();
-    // console.log(foundEvent);
     const isOrganizer = foundEvent.Group.organizerId === user.id;
     let isAttending = false;
     let isCoHost = false;
@@ -387,7 +386,6 @@ router.put("/:eventId/attendance", requireAuth, async (req, res, next) => {
         });
 
     foundEvent = foundEvent.toJSON();
-    // console.log(foundEvent);
 
     let isOrganizer = false;
     if (foundEvent.Group)
@@ -397,10 +395,7 @@ router.put("/:eventId/attendance", requireAuth, async (req, res, next) => {
     if (foundEvent.Group.Member && foundEvent.Group.Member.length)
         isCoHost = true;
 
-    if (!isCoHost && !isOrganizer) {
-        // return res.json(foundEvent);
-        return next(new Error("Forbidden"));
-    }
+    if (!isCoHost && !isOrganizer) return next(new Error("Forbidden"));
 
     const foundAttendee = await Attendance.findOne({
         where: { userId, eventId },
@@ -593,7 +588,6 @@ router.get("/", async (req, res, next) => {
         event.dataValues.endDate = formatDate(event.dataValues.endDate);
     }
 
-    console.log(events);
     res.json({
         Events: events,
         page: parseInt(page),

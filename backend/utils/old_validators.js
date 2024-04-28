@@ -48,14 +48,12 @@ function validateEventData(req, res) {
     if (isNaN(parseFloat(price)) && parseFloat(price) > 0) err.errors.price = "Price is invalid";
     if (!description) err.errors.description = "Description is required";
     if (startDate < newFormattedDate()) {
-        console.log(newFormattedDate());
         err.errors.startDate = "Start date must be in the future";
     }
     if (endDate < startDate)
         err.errors.endDate = "End date is less than start date";
 
     if (Object.keys(err.errors).length) {
-        console.log(err);
         res.status(400).json(err);
         return false;
     } else return true;

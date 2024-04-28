@@ -27,8 +27,7 @@
     align-items: stretch;
     text-decoration: none;
     color: black;
-    padding-bottom: 12px;
-    padding-top: 12px;
+    padding: 12px;
 }
 
 .group-card img {

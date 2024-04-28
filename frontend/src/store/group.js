@@ -1,5 +1,4 @@
 import { csrfFetch } from "./csrf.js";
-// import t
 
 const GROUPS_LIST = "groups/listGroups";
 const DISPLAY_GROUP = "groups/displayGroup";
@@ -71,10 +70,6 @@ export const getGroupEvents = (groupId) => async (dispatch) => {
     return res;
 };
 
-// export const getGroupsEventCounts = (groups) => async (dispatch) => {
-
-// }
-
 const initialState = { Groups: null };
 
 function groupReducer(state = initialState, action) {
@@ -85,11 +80,6 @@ function groupReducer(state = initialState, action) {
             return { ...state, groupDetails: action.groupDetails };
         case GROUP_EVENTS:
             return { ...state, groupEvents: action.groupEvents };
-        // case GROUPS_EVENT_COUNT:
-        //     // state.Groups.forEach((group) => group.eventCount = );
-        //     console.log(state?.Groups);
-
-        //     return { ...state };
         default:
             return state;
     }

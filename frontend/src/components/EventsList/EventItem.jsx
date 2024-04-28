@@ -1,14 +1,17 @@
 import { NavLink } from "react-router-dom";
 import "./EventsList.css";
 
-export default function EventItem({ event }) {
-    console.log(event);
+export default function EventItem({ event, list }) {
     return (
-        <li key={event.id} className="event-card">
+        <li
+            key={event.id}
+            className="event-card"
+            style={{ width: list ? "800px" : "516px" }}
+        >
             <NavLink to={`/events/${event.id}`} className="event-link">
                 <div className="event-top-half">
                     <img
-                        className="event-preview-image"
+                        className={(list ? "list" : "event") + "-preview-image"}
                         src={event.previewImage}
                     />
                     <div className="event-card-title">
