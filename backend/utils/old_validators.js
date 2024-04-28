@@ -20,8 +20,8 @@ function validateGroupData(req, res) {
     const { name, about, type, private, city, state } = req.body;
     if (name.split("").length > 60)
         err.errors.name = "Name must be 60 characters or less";
-    if (about.split("").length < 50)
-        err.errors.about = "About must be 50 characters or more";
+    if (about.split("").length < 30)
+        err.errors.about = "About must be 30 characters or more";
     if (type !== "In person" && type !== "Online")
         err.errors.type = "Type must be 'Online' or 'In person'";
     if (typeof private !== "boolean")
