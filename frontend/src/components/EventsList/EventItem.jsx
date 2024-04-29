@@ -6,7 +6,10 @@ export default function EventItem({ event, list }) {
         <li
             key={event.id}
             className="event-card"
-            style={{ width: list ? "800px" : "516px" }}
+            style={{
+                width: list ? "800px" : "516px",
+                height: list ? "280px" : "auto",
+            }}
         >
             <NavLink to={`/events/${event.id}`} className="event-link">
                 <div className="event-top-half">
@@ -31,7 +34,7 @@ export default function EventItem({ event, list }) {
                         )}
                     </div>
                 </div>
-                <p>{event.description}</p>
+                <p className="event-desc">{event.description}</p>
             </NavLink>
         </li>
     );

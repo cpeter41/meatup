@@ -82,7 +82,11 @@ function App() {
     return (
         <HelmetProvider context={helmetContext}>
             <Helmet>
-                <title>meatup</title>
+                {import.meta.env.MODE === "production" ? (
+                    <title>meatup</title>
+                ) : (
+                    <title>meatup (dev)</title>
+                )}
             </Helmet>
             <RouterProvider router={router} />;
         </HelmetProvider>

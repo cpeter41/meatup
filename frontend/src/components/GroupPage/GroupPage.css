@@ -29,8 +29,9 @@
 
 #group-image-box img {
     display: block;
-    max-width: 600px;
-    max-height: 400px;
+    width: 557px;
+    height: 371px;
+    object-fit: cover;
     margin-right: 20px;
 }
 
