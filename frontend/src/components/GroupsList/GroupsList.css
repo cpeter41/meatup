@@ -10,6 +10,10 @@
     padding: 0;
 }
 
+#groups-list li {
+    height: 240px;
+}
+
 #groups-list li:hover {
     background-color: rgb(246, 246, 246);
 }
@@ -31,10 +35,10 @@
 }
 
 .group-card img {
-    height: 160px;
-    width: 200px;
-    min-height: 160px;
-    min-width: 200px;
+    height: 200px;
+    width: 280px;
+    min-height: 200px;
+    min-width: 280px;
     object-fit: cover;
 }
 
@@ -52,9 +56,17 @@
     flex-direction: column;
     justify-content: space-between;
     margin-left: 10px;
+    height: 200px;
 }
 
 .group-info-card h3 {
     margin: 0;
     color: rgb(242, 97, 78);
+}
+
+.group-desc {
+    flex-grow: 1;
+    height: 110px;
+    overflow-y: auto;
+    scrollbar-width: thin;
 }

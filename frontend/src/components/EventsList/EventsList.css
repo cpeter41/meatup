@@ -5,6 +5,9 @@
 .event-link > p {
     margin: 0 20px 0 20px;
     padding-bottom: 10px;
+    height: 120px;
+    overflow-y: auto;
+    scrollbar-width: thin;
     color: black;
     font-size: smaller;
 }

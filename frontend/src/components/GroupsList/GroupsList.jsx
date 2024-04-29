@@ -38,10 +38,7 @@ function GroupsList() {
                             return (
                                 <div key={group.id}>
                                     <hr />
-                                    <li
-                                        
-                                        style={{ borderRadius: "16px" }}
-                                    >
+                                    <li style={{ borderRadius: "16px" }}>
                                         <NavLink
                                             className="group-card"
                                             to={`/groups/${group.id}`}
@@ -52,7 +49,9 @@ function GroupsList() {
                                                 <span style={{ color: "gray" }}>
                                                     {group.city}, {group.state}
                                                 </span>
-                                                <p>{group.about}</p>
+                                                <p className="group-desc">
+                                                    {group.about}
+                                                </p>
                                                 <span
                                                     style={{ color: "gray" }}
                                                     className="event-count"
