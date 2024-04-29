@@ -44,7 +44,7 @@ const venues = [
     {
         groupId: 4,
         address: "70 Bubble Blvd.",
-        city: "Irvine",
+        city: "Los Angeles",
         state: "CA",
         lat: 1.2345678,
         lng: -9.1011121,
@@ -56,6 +56,31 @@ const venues = [
         state: "WA",
         lat: -45.101011,
         lng: 90.0,
+    },
+    {
+        // 7
+        groupId: 6,
+        address: "683 Johnny Walker Ln.",
+        city: "Memphis",
+        state: "TN",
+        lat: -40.8237467,
+        lng: 20.0,
+    },
+    {
+        groupId: 2,
+        address: "43 Alamo Dr.",
+        city: "Austin",
+        state: "TX",
+        lat: 0,
+        lng: 0,
+    },
+    {
+        groupId: 5,
+        address: "55 Lancaster St.",
+        city: "Hattiesburg",
+        state: "MS",
+        lat: 0,
+        lng: 0,
     },
 ];
 

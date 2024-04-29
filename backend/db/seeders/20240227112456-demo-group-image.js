@@ -11,17 +11,17 @@ if (process.env.NODE_ENV === "production") {
 const groupImages = [
     {
         groupId: 1,
-        url: "https://girlscangrill.com/wp-content/uploads/2023/05/sliced-ninja-ribeye-500x500.jpg",
+        url: "https://hips.hearstapps.com/hmg-prod/images/delish-filet-mignon-horizontal-1541189043.jpeg",
         preview: true,
     },
     {
         groupId: 2,
-        url: "https://assets3.thrillist.com/v1/image/3080265/750x500.jpg",
+        url: "https://girlscangrill.com/wp-content/uploads/2023/05/sliced-ninja-ribeye-500x500.jpg",
         preview: true,
     },
     {
         groupId: 3,
-        url: "https://hips.hearstapps.com/hmg-prod/images/delish-filet-mignon-horizontal-1541189043.jpeg",
+        url: "https://assets3.thrillist.com/v1/image/3080265/750x500.jpg",
         preview: true,
     },
     {
@@ -35,9 +35,9 @@ const groupImages = [
         preview: true,
     },
     {
-        groupId: 3,
-        url: "https://cdn.apartmenttherapy.info/image/upload/f_auto,q_auto:eco,c_fill,g_auto,w_1500,ar_3:2/k%2FPhoto%2FRecipes%2F2023-12-filet-mignon%2Ffilet-mignon-514.jpg",
-        preview: false,
+        groupId: 6,
+        url: "https://t3.ftcdn.net/jpg/05/63/32/30/240_F_563323083_iD6EXOVpPblV1w3BcRzsMx4goaFGvW7U.jpg",
+        preview: true,
     },
 ];
 

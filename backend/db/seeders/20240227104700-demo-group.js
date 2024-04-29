@@ -14,8 +14,8 @@ const groups = [
         about: "This is the demo user's Group. Click here to try updating the group! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris facilisis congue odio, id tempor nisl gravida ut.",
         type: "In person",
         private: false,
-        city: "Anaheim",
-        state: "CA",
+        city: "Bellevue",
+        state: "WA",
     },
     {
         organizerId: 2,
@@ -52,6 +52,16 @@ const groups = [
         private: false,
         city: "Hattiesburg",
         state: "MS",
+    },
+    {
+        // 6
+        organizerId: 3,
+        name: '"Hot Chicks" Chicken Enthusiasts',
+        about: "asdasdasdasdasfjkahsgfhjkasdgfkhjasdgfkjhasdvgbfkjhasdgvcjkhasgdcjkhsadc",
+        type: "In person",
+        private: true,
+        city: "Memphis",
+        state: "TN",
     },
 ];
 
