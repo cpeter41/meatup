@@ -68,7 +68,7 @@ function SignupFormModal() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Email"
                 />
-                {errors.email && <p>{errors.email}</p>}
+                {errors.email && <p>Please enter a valid email</p>}
                 <label>Username</label>
                 <input
                     type="text"

@@ -18,7 +18,7 @@ function LandingPage() {
                 <HomeNavCard type="find-an-event" />
                 <HomeNavCard type="create-group" />
             </div>
-            {user && (
+            {!user && (
                 <div id="join-meatup">
                     <OpenModalMenuItem
                         itemText="Join meatup"
