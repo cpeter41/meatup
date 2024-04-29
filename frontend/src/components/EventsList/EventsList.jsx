@@ -79,9 +79,14 @@ export default function EventsList() {
             );
         });
 
-        const both = upcomingItems.concat(pastItems);
-
-        return both;
+        return (
+            <>
+                {upcomingItems}
+                <hr />
+                <h2>Past Events</h2>
+                {pastItems}
+            </>
+        );
     };
 
     return (

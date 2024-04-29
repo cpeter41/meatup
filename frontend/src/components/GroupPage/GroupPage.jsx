@@ -47,25 +47,42 @@ function GroupPage() {
             const pastEvents = [];
             let lastUpcomingDate, lastPastDate;
             events.Events.forEach((event) => {
-                const item = <EventItem key={event.id} event={event} />;
                 // sort
                 if (event.startDate > newFormattedDate()) {
                     if (event.startDate > lastUpcomingDate) {
-                        upcomingEvents.unshift(item);
+                        upcomingEvents.unshift(event);
                         lastUpcomingDate = event.startDate;
-                    }
-                    else upcomingEvents.push(item);
-                }
-                else {
+                    } else upcomingEvents.push(event);
+                } else {
                     if (event.startDate > lastPastDate) {
-                        pastEvents.push(item);
+                        pastEvents.push(event);
                         lastPastDate = event.startDate;
-                    }
-                    else pastEvents.unshift(item);
+                    } else pastEvents.unshift(event);
                 }
             });
-            setUpcoming(upcomingEvents);
-            setPast(pastEvents);
+
+            upcomingEvents.sort((a, b) => {
+                if (a.startDate < b.startDate) return -1;
+                else if (a.startDate === b.startDate) return 0;
+                else return 1;
+            });
+            // convert to react components
+            const upcomingItems = upcomingEvents.map((event) => {
+                return <EventItem key={event.id} event={event} />;
+            });
+
+            pastEvents.sort((a, b) => {
+                if (a.startDate > b.startDate) return -1;
+                else if (a.startDate === b.startDate) return 0;
+                else return 1;
+            });
+            // convert to react components
+            const pastItems = pastEvents.map((event) => {
+                return <EventItem key={event.id} event={event} />;
+            });
+
+            setUpcoming(upcomingItems);
+            setPast(pastItems);
         }
     }, [events]);
 
