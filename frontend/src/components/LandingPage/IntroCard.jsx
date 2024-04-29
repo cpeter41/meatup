@@ -9,12 +9,10 @@ function IntroCard() {
                     Where food inspires friendships
                 </h1>
                 <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Aenean at ipsum eu nisi faucibus iaculis vel vitae elit.
-                    Etiam malesuada urna ac sapien volutpat dapibus. Duis nec
-                    erat at est tempor ornare vel sed arcu. Fusce facilisis
-                    fringilla lacus a ullamcorper. Duis tincidunt augue nec
-                    imperdiet feugiat.
+                    Whatever your interest, from boardgames and grilling to
+                    dancing and eating, there are thousands of people
+                    who share it on meatup. Events are happening every day—sign
+                    up to join the fun.
                 </p>
             </div>
             <img

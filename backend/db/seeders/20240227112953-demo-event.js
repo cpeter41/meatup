@@ -43,8 +43,7 @@ const events = [
         description:
             "Get ready to spin into a world of succulent flavors at our Rotisserie Chicken Extravaganza! Join us as we celebrate the crispy, juicy perfection of everyone's favorite bird on a spit. " +
             "From traditional herb-infused classics to bold, globally-inspired marinades, our event promises a mouthwatering journey through the art of rotisserie chicken. Whether you're a die-hard " +
-            "fan or a newcomer to the rotisserie game, come feast with us as we pay homage to this beloved culinary delight. With live cooking demos, tantalizing tastings, and the chance to crown the " +
-            "top roaster, it's an event that'll leave you clucking for more!",
+            "fan or a newcomer to the rotisserie game, come feast with us as we pay homage to this beloved culinary delight. It's an event that'll leave you clucking for more!",
         type: "In person",
         capacity: 30,
         price: 9.49,

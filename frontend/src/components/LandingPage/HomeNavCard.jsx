@@ -16,7 +16,7 @@ function HomeNavCard({ type }) {
                         See all groups
                     </NavLink>
                     <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        View a list of all groups on meatup
                     </p>
                 </div>
             );
@@ -31,7 +31,7 @@ function HomeNavCard({ type }) {
                         Find an event
                     </NavLink>
                     <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        View a list of all events hosted by meatup members
                     </p>
                 </div>
             );
@@ -50,7 +50,7 @@ function HomeNavCard({ type }) {
                         <span className="disabled">Start a new Group</span>
                     )}
                     <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Invite others to try meats of your own!
                     </p>
                 </div>
             );
